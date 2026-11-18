@@ -1,0 +1,42 @@
+fcc superlattices n=2..32: 1492, cyclic quotient group: 1247
+n=24: 144 superlattices, 99 cyclic
+problem                                        structures  time (s)
+fcc binary, all compositions, n=24             19,335,101      1.04
+fcc binary, all compositions, n=26             45,995,141      0.89
+fcc ternary, all compositions, n=16             9,235,364      1.20
+fcc quaternary, all compositions, n=12            827,269      0.09
+fcc 10:5:5, n=20                               73,095,238      2.13
+fcc 24:8, n=32                                 22,697,848      2.33
+hcp ternary, all compositions, 16 sites         8,327,369      2.25
+hcp 12:12, 24 sites                             5,430,256      1.01
+binary fcc n= 2:              2  (0.0 s)
+binary fcc n= 3:              3  (0.0 s)
+binary fcc n= 4:             12  (0.0 s)
+binary fcc n= 5:             14  (0.0 s)
+binary fcc n= 6:             50  (0.0 s)
+binary fcc n= 7:             52  (0.0 s)
+binary fcc n= 8:            229  (0.0 s)
+binary fcc n= 9:            252  (0.0 s)
+binary fcc n=10:            685  (0.0 s)
+binary fcc n=11:            682  (0.0 s)
+binary fcc n=12:          3,875  (0.1 s)
+binary fcc n=13:          2,624  (0.0 s)
+binary fcc n=14:          9,628  (0.0 s)
+binary fcc n=15:         16,584  (0.0 s)
+binary fcc n=16:         49,764  (0.1 s)
+binary fcc n=17:         42,135  (0.0 s)
+binary fcc n=18:        212,612  (0.1 s)
+binary fcc n=19:        174,104  (0.0 s)
+binary fcc n=20:        867,893  (0.1 s)
+binary fcc n=21:      1,120,708  (0.1 s)
+binary fcc n=22:      2,628,180  (0.1 s)
+binary fcc n=23:      3,042,732  (0.1 s)
+binary fcc n=24:     19,335,101  (1.0 s)
+binary fcc n=25:     15,592,901  (0.9 s)
+binary fcc n=26:     45,995,141  (0.9 s)
+binary fcc n=27:     82,823,587  (5.2 s)
+binary fcc n=28:    255,215,928  (7.1 s)
+binary fcc n=29:    224,864,930  (3.3 s)
+binary fcc n=30:  1,311,471,651  (10.1 s)
+binary fcc n=31:    941,857,818  (15.2 s)
+binary fcc n=32: 4,592,213,143  (353 s)

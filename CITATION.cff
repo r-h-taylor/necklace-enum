@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: necklace-enum
+version: 0.1.0
+authors:
+  - family-names: Taylor
+    given-names: Richard
+license: MIT
+repository-code: "https://github.com/r-h-taylor/necklace-enum"
+preferred-citation:
+  type: article
+  title: "Improving the Hart-Forcade enumeration algorithm: derivative superstructures as Lyndon words"
+  authors:
+    - family-names: Taylor
+      given-names: Richard
+  year: 2026

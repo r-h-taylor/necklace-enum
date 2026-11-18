@@ -1,0 +1,10 @@
+__pycache__/
+*.egg-info/
+build/
+dist/
+*.nbi
+*.nbc
+.DS_Store
+.pytest_cache/
+.venv/
+venv/
