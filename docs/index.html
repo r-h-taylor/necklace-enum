@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Necklace Enum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html { font-size: 15px; }
+  body {
+    max-width: 36rem;
+    margin: 0 auto;
+    padding: 4rem 1.3rem 5rem;
+    background: #ffffff;
+    color: #1a1a1a;
+    font-family: "EB Garamond", Georgia, serif;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  h1 { font-weight: 500; font-size: 1.6rem; line-height: 1.3; margin: 0 0 1.5rem 0; }
+  a { color: #1a3e7a; text-decoration: none; }
+  a:hover { color: #000; text-decoration: underline; }
+  ul { list-style: none; padding: 0; margin: 1.2rem 0 0 0; }
+  li { margin: 0.35rem 0; }
+</style>
+</head>
+<body>
+
+<h1>Necklace Enum</h1>
+
+<p>Necklace Enum lists the symmetrically distinct derivative superstructures of a parent lattice &mdash; the ways of
+decorating it with several kinds of atom &mdash; by generating each one directly instead of filtering out duplicates.
+Reading the sites of a superlattice column by column along the largest cyclic factor of its quotient group turns
+every decoration into a word on which translations act as rotations, so the distinct structures are Lyndon words
+and can be produced with a necklace algorithm. The Python package reproduces all published counts and is one to
+two orders of magnitude faster than earlier codes.</p>
+
+<ul>
+  <li><a href="https://github.com/r-h-taylor/necklace-enum/archive/refs/heads/main.zip">Download the package</a> &mdash; <a href="https://github.com/r-h-taylor/necklace-enum">GitHub</a></li>
+  <li><a href="necklace-enum.pdf">Paper</a> &mdash; R. H. Taylor, <em>Improving the Hart&ndash;Forcade enumeration algorithm: derivative superstructures as Lyndon words</em> (2026)</li>
+  <li><a href="/">Richard H. Taylor</a></li>
+</ul>
+
+</body>
+</html>
