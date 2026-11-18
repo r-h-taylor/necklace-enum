@@ -54,6 +54,31 @@ necklace-enum list hcp Mg,Cd 4 --composition 5,3 --format extxyz -o out.xyz
 - Only structures that contain every species are listed unless `include_incomplete=True`.
 - Structures that are periodic in a smaller cell are excluded; they appear at their own, smaller size.
 
+## enumlib compatibility
+
+necklace-enum reads enumlib's input file and writes its `struct_enum.out` format, so it can take the place of
+`enum.x` in existing workflows:
+
+```bash
+necklace-enum enumlib struct_enum.in                    # writes struct_enum.out, as enum.x does
+necklace-enum list fcc Cu,Au 1-12 --format enum -o struct_enum.out
+```
+
+```python
+te.run_enumlib_input("struct_enum.in", "struct_enum.out")
+te.write_struct_enum("struct_enum.out", P, range(1, 13))
+header, rows = te.read_struct_enum("struct_enum.out")    # also reads enumlib's own files
+```
+
+enumlib's `makeStr.py` and `makestr.x` (which pymatgen calls) build POSCAR files from this output unchanged.
+The output follows enumlib's conventions:
+- A "partial" listing without concentration restrictions identifies structures related by swapping species, as in
+  Hart & Forcade's tables. "Full" listings and concentration-restricted runs list them separately.
+- The degeneracy columns are exact: `Totdegn` summed over a cell size equals the number of (superlattice, labeling)
+  pairs the structures stand for. enumlib writes `labdegn = 0` in its fixed-concentration mode.
+
+`scripts/compare_with_enumlib.py` runs both programs on the same input and compares the results.
+
 ## Verification
 
 ```bash
@@ -67,7 +92,7 @@ python scripts/reproduce_paper.py [--full]
 The tests compare the generated structures, one by one, with an independent brute-force code for fcc, bcc,
 simple-cubic and hcp parents (including site restrictions and fixed compositions). They also reproduce every count
 tabulated by Hart & Forcade, and check that each exported crystal is primitive in its own cell and that no two
-exported crystals are symmetry-equivalent. `tests/hart_forcade.py` is a compiled reference implementation of the 2008 algorithm, used to check counts and to compare speed.
+exported crystals are symmetry-equivalent. The enumlib-format tests rebuild every structure from the written file with enumlib's indexing rule and check the degeneracy columns against a direct count. `tests/hart_forcade.py` is a compiled reference implementation of the 2008 algorithm, used to check counts and to compare speed.
 
 ## Performance and limits
 

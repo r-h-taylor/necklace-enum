@@ -5,6 +5,8 @@ Examples
     necklace-enum count fcc Cu,Au 1-12
     necklace-enum count fcc 3 2-10 --label-exchange
     necklace-enum list hcp Mg,Cd 4 --composition 5,3 --format extxyz -o out.xyz
+    necklace-enum list fcc Cu,Au 1-8 --format enum -o struct_enum.out
+    necklace-enum enumlib [struct_enum.in]      # drop-in for enumlib's enum.x
 """
 from __future__ import annotations
 
@@ -33,6 +35,14 @@ def _species(text):
 
 
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv and argv[0] == "enumlib":
+        from .enumlib_format import run_enumlib_input
+        infile = argv[1] if len(argv) > 1 else "struct_enum.in"
+        t = time.perf_counter()
+        n = run_enumlib_input(infile, "struct_enum.out")
+        print(f"wrote struct_enum.out: {n:,d} structures ({time.perf_counter() - t:.1f} s)")
+        return 0
     ap = argparse.ArgumentParser(prog="necklace-enum", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("action", choices=["count", "list"])
@@ -42,7 +52,10 @@ def main(argv=None):
     ap.add_argument("--composition", help="atom counts per species, e.g. 6,2")
     ap.add_argument("--label-exchange", action="store_true",
                     help="identify structures related by permuting species (Hart-Forcade tables)")
-    ap.add_argument("--format", default="summary", help="'summary' or an ASE format such as extxyz")
+    ap.add_argument("--format", default="summary",
+                    help="'summary', 'enum' (enumlib's struct_enum.out) or an ASE format such as extxyz")
+    ap.add_argument("--include-incomplete", action="store_true",
+                    help="also list structures in which some species is absent")
     ap.add_argument("-o", "--output", help="output file for --format other than summary")
     args = ap.parse_args(argv)
 
@@ -58,7 +71,14 @@ def main(argv=None):
             print(f"n={n:3d}  {c:>14,d}  ({time.perf_counter() - t:.2f} s)")
         print(f"total {total:,d}")
         return 0
-    structs = enumerate_structures(P, sizes, composition=comp, label_exchange=args.label_exchange)
+    if args.format == "enum":
+        from .enumlib_format import write_struct_enum
+        n = write_struct_enum(args.output or "struct_enum.out", P, sizes, composition=comp,
+                              include_incomplete=args.include_incomplete)
+        print(f"wrote {args.output or 'struct_enum.out'}: {n:,d} structures")
+        return 0
+    structs = enumerate_structures(P, sizes, composition=comp, label_exchange=args.label_exchange,
+                                   include_incomplete=args.include_incomplete)
     if args.format == "summary":
         for s in structs:
             print(s.size, s.hnf.ravel().tolist(), "".join(str(P.species[x])[0] for x in s.labels))
