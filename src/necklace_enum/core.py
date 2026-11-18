@@ -140,7 +140,9 @@ def _composition_vector(P: Parent, composition, N):
 
 # ---------------------------------------------------------------- driver
 def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, stats):
-    """Enumerate one index n. Yields (hnf, labels) if store, else returns the count."""
+    """Enumerate one index n. store=True yields (hnf, labels) per structure; store="batch"
+    yields (list of hnfs, labels array) per group of superlattices sharing the same words;
+    store=False returns the count."""
     k, d = P.k, P.d
     N = n * d
     conc = _composition_vector(P, composition, N)
@@ -234,17 +236,20 @@ def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, s
             for ci, key in enumerate(keys):
                 total += int(counts[ci]) * len(classes[key])
             if store:
-                for w, ci in zip(ow[:ns], oc[:ns]):
-                    flat = []
-                    for s in w:
-                        col = []
-                        for _ in range(A_):
-                            col.append(int(s % k))
-                            s //= k
-                        flat.extend(reversed(col))
-                    lab = tuple(flat[phi[x]] for x in range(N))
-                    for q in classes[keys[ci]]:
-                        yield q.H, lab
+                # decode all words at once: letter -> its A_ base-k digits -> site labels
+                W = ow[:ns]
+                powers = k ** np.arange(A_ - 1, -1, -1, dtype=np.int64)
+                flat = ((W[:, :, None] // powers) % k).reshape(ns, m * A_)
+                labs = flat[:, phi]                                    # (ns, N), site order
+                cls = oc[:ns]
+                if store == "batch":
+                    for ci in np.unique(cls):
+                        yield [q.H for q in classes[keys[ci]]], labs[cls == ci]
+                else:
+                    for lab_row, ci in zip(labs, cls):
+                        lab = tuple(int(x) for x in lab_row)
+                        for q in classes[keys[ci]]:
+                            yield q.H, lab
     return total
 
 
