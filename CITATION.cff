@@ -4,13 +4,22 @@ title: necklace-enum
 version: 0.1.0
 authors:
   - family-names: Taylor
-    given-names: Richard
+    given-names: Richard H.
+    orcid: "https://orcid.org/0009-0005-9996-0320"
+    affiliation: "Salt Lake City, Utah"
 license: MIT
+abstract: "Enumerates derivative superstructures of a parent lattice by generating them directly as Lyndon words on the quotient group of each superlattice."
+keywords:
+  - derivative structures
+  - enumeration
+  - Lyndon words
+  - Hart-Forcade
 repository-code: "https://github.com/r-h-taylor/necklace-enum"
 preferred-citation:
   type: article
   title: "Improving the Hart-Forcade enumeration algorithm: derivative superstructures as Lyndon words"
   authors:
     - family-names: Taylor
-      given-names: Richard
+      given-names: Richard H.
+      orcid: "https://orcid.org/0009-0005-9996-0320"
   year: 2026
