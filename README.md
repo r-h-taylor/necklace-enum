@@ -1,9 +1,11 @@
 # necklace-enum
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24330096.svg)](https://doi.org/10.5281/zenodo.24330096)
+
 Enumerates derivative superstructures — the symmetrically distinct ways of decorating a parent lattice with
 several kinds of atoms — by generating them directly as canonical words, without filtering duplicates.
 
-Project page: https://r-h-taylor.github.io/necklace-enum/
+Project page: https://r-h-taylor.github.io/necklace-enum/ · Archived at Zenodo: https://doi.org/10.5281/zenodo.24330096
 
 This is the reference implementation for
 
