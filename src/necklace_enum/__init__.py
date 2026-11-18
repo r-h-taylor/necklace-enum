@@ -1,6 +1,6 @@
 """necklace_enum: derivative structures generated as Lyndon words on the quotient group.
 
-Reference implementation for R. Taylor, "Improving the Hart-Forcade enumeration algorithm: derivative superstructures as Lyndon words".
+Reference implementation for R. H. Taylor, "Improving the Hart-Forcade enumeration algorithm: derivative superstructures as Lyndon words".
 """
 from .core import Structure, count_structures, enumerate_structures
 from .parent import Parent, bcc, fcc, hcp, sc
