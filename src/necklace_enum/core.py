@@ -7,9 +7,11 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .kernel import product_tables, reversal_maps, split_reversal, torus_kernel
+from .kernel import product_tables, reversal_maps, split_reversal, torus_kernel, torus_kernel_resume
 from .lattice import Quotient, unique_superlattices
 from .parent import Parent
+
+LIST_BATCH = 1 << 16          # words per batch when listing; memory stays fixed at about this size
 
 
 # ---------------------------------------------------------------- results
@@ -221,35 +223,45 @@ def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, s
             swtrans = np.array(swt, dtype=np.bool_)
             MU = reversal_maps(nu, digits, weights, SW)
             counts = np.zeros(len(keys), dtype=np.int64)
-            cap = (1 << 14) if store else 0
-            while True:
+            if not store:
+                ns, nodes = torus_kernel(m, A_, k, c, symcnt, SW, swtrans, Rp, mask, counts,
+                                         False, np.zeros((0, m), dtype=np.int64), np.zeros(0, dtype=np.int64),
+                                         allowed, MU, ISP, CM, LT)
+            else:
+                # Listing streams: the kernel fills a fixed buffer, pauses, and resumes where it
+                # stopped, so memory does not grow with the number of structures.
+                cap = max(LIST_BATCH, len(keys))
                 ow = np.zeros((cap, m), dtype=np.int64)
                 oc = np.zeros(cap, dtype=np.int64)
-                counts[:] = 0
-                ns, nodes = torus_kernel(m, A_, k, c, symcnt, SW, swtrans, Rp, mask, counts,
-                                         store, ow, oc, allowed, MU, ISP, CM, LT)
-                if not store or ns == counts.sum():
-                    break
-                cap = int(counts.sum()) + 1
+                W_ = max(SW.shape[0] * m, 1)
+                state = (np.zeros(k, dtype=np.int64), np.zeros(m + 1, dtype=np.int64),
+                         np.zeros(m + 2, dtype=np.int64), np.full(m + 2, -1, dtype=np.int64),
+                         np.zeros((m + 1, W_), dtype=np.int64), np.zeros(m + 1, dtype=np.int64),
+                         np.zeros(max(m * MU.shape[0], 1), dtype=np.int64), np.zeros(m + 2, dtype=np.int64),
+                         np.zeros(3, dtype=np.int64))
+                powers = k ** np.arange(A_ - 1, -1, -1, dtype=np.int64)
+                done = False
+                while not done:
+                    ns, nodes, done = torus_kernel_resume(m, A_, k, c, symcnt, SW, swtrans, Rp, mask, counts,
+                                                          ow, oc, allowed, MU, ISP, CM, LT, *state)
+                    if ns == 0:
+                        continue
+                    # decode the batch: letter -> its A_ base-k digits -> site labels
+                    flat = ((ow[:ns, :, None] // powers) % k).reshape(ns, m * A_)
+                    labs = flat[:, phi]                                # (ns, N), site order
+                    cls = oc[:ns].copy()
+                    if store == "batch":
+                        for ci in np.unique(cls):
+                            yield [q.H for q in classes[keys[ci]]], labs[cls == ci]
+                    else:
+                        for lab_row, ci in zip(labs, cls):
+                            lab = tuple(int(x) for x in lab_row)
+                            for q in classes[keys[ci]]:
+                                yield q.H, lab
             if stats is not None:
                 stats["nodes"] = stats.get("nodes", 0) + int(nodes)
             for ci, key in enumerate(keys):
                 total += int(counts[ci]) * len(classes[key])
-            if store:
-                # decode all words at once: letter -> its A_ base-k digits -> site labels
-                W = ow[:ns]
-                powers = k ** np.arange(A_ - 1, -1, -1, dtype=np.int64)
-                flat = ((W[:, :, None] // powers) % k).reshape(ns, m * A_)
-                labs = flat[:, phi]                                    # (ns, N), site order
-                cls = oc[:ns]
-                if store == "batch":
-                    for ci in np.unique(cls):
-                        yield [q.H for q in classes[keys[ci]]], labs[cls == ci]
-                else:
-                    for lab_row, ci in zip(labs, cls):
-                        lab = tuple(int(x) for x in lab_row)
-                        for q in classes[keys[ci]]:
-                            yield q.H, lab
     return total
 
 

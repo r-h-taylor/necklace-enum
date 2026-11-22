@@ -9,3 +9,4 @@ dist/
 .venv/
 venv/
 demo_output/
+struct_enum.out

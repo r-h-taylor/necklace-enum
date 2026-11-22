@@ -1,0 +1,18 @@
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1; peak resident memory in GB (wall time)
+problem                                    necklace count  necklace list        enumlib
+baseline (tiny cell)                         0.085 (    1s)   0.088 (    1s)   0.001 (    0s)
+fcc binary, all compositions, n=16           0.086 (    1s)   0.106 (    1s)   0.005 (    1s)
+fcc binary, all compositions, n=20           0.086 (    1s)   0.121 (    2s)   0.017 (    8s)
+fcc binary, all compositions, n=24           0.089 (    2s)   0.153 (   29s)   0.354 (  210s)
+fcc ternary, all compositions, n=12          0.086 (    1s)   0.099 (    1s)   0.008 (    3s)
+fcc ternary, all compositions, n=14          0.086 (    1s)   0.102 (    3s)   0.032 (   17s)
+fcc quaternary, all compositions, n=10       0.087 (    1s)   0.098 (    1s)   0.009 (    3s)
+fcc 15:5, n=20                               0.087 (    1s)   0.094 (    1s)   0.019 (    1s)
+fcc 24:8, n=32                               0.086 (    2s)   0.171 (   23s)  50.986 (  286s)
+fcc 10:5:5, n=20                             0.086 (    3s)   0.148 (   47s)   0.766 (  275s)
+hcp binary, all compositions, 24 sites       0.086 (    5s)   0.145 (   54s)   0.799 (  271s)
+hcp ternary, all compositions, 16 sites      0.095 (    9s)   0.115 (   92s)   1.397 (  375s)
+fcc binary, all compositions, n=28           0.086 (   11s)   0.157 (  301s)        timeout
+fcc binary, all compositions, n=32           0.088 (  537s)        timeout        timeout
+fcc 44:4, n=48                               0.089 (    2s)   0.129 (    3s)   3.515 (   86s)
+fcc 42:6, n=48                               0.090 (    7s)   0.217 (   67s)  exit 1: time:

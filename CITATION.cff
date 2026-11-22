@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite the paper below."
 title: necklace-enum
-version: 0.1.0
+version: 0.2.0
 authors:
   - family-names: Taylor
     given-names: Richard H.
@@ -18,7 +18,7 @@ doi: "10.5281/zenodo.24330096"
 repository-code: "https://github.com/r-h-taylor/necklace-enum"
 preferred-citation:
   type: article
-  title: "Improving the Hart-Forcade enumeration algorithm: derivative superstructures as Lyndon words"
+  title: "Toroidal necklaces for low-memory derivative structure enumeration"
   authors:
     - family-names: Taylor
       given-names: Richard H.

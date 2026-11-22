@@ -4,6 +4,7 @@ Examples
 --------
     necklace-enum count fcc Cu,Au 1-12
     necklace-enum count fcc 3 2-10 --label-exchange
+    necklace-enum count fcc 2 1-60 --label-exchange --burnside   # counts only, no listing
     necklace-enum list hcp Mg,Cd 4 --composition 5,3 --format extxyz -o out.xyz
     necklace-enum list fcc Cu,Au 1-8 --format enum -o struct_enum.out
     necklace-enum enumlib [struct_enum.in]      # drop-in for enumlib's enum.x
@@ -14,7 +15,7 @@ import argparse
 import sys
 import time
 
-from . import bcc, count_structures, enumerate_structures, fcc, hcp, sc
+from . import bcc, count_structures, count_structures_burnside, enumerate_structures, fcc, hcp, sc
 
 PARENTS = {"fcc": fcc, "bcc": bcc, "sc": sc, "hcp": hcp}
 
@@ -56,6 +57,8 @@ def main(argv=None):
                     help="'summary', 'enum' (enumlib's struct_enum.out) or an ASE format such as extxyz")
     ap.add_argument("--include-incomplete", action="store_true",
                     help="also list structures in which some species is absent")
+    ap.add_argument("--burnside", action="store_true",
+                    help="count by Burnside's lemma instead of generating (count only; reaches far larger sizes)")
     ap.add_argument("-o", "--output", help="output file for --format other than summary")
     args = ap.parse_args(argv)
 
@@ -66,7 +69,9 @@ def main(argv=None):
         total = 0
         for n in sizes:
             t = time.perf_counter()
-            c = count_structures(P, n, composition=comp, label_exchange=args.label_exchange)[n]
+            counter = count_structures_burnside if args.burnside else count_structures
+            c = counter(P, n, composition=comp, label_exchange=args.label_exchange,
+                        include_incomplete=args.include_incomplete)[n]
             total += c
             print(f"n={n:3d}  {c:>14,d}  ({time.perf_counter() - t:.2f} s)")
         print(f"total {total:,d}")

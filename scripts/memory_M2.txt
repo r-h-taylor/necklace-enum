@@ -1,0 +1,10 @@
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1; peak resident memory in GB (wall time)
+problem                                    necklace count  necklace list   dsenum count     Enumlib.jl        enumlib
+baseline (tiny cell)                         0.133 (    2s)   0.133 (    0s)   0.197 (    3s)   0.358 (    4s)   0.003 (    0s)
+fcc binary, all compositions, n=16           0.134 (    1s)   0.149 (    1s)   0.204 (    3s)   0.394 (    2s)   0.007 (    1s)
+fcc binary, all compositions, n=20           0.133 (    1s)   0.164 (    2s)   0.223 (    9s)   0.663 (   16s)   0.018 (    8s)
+fcc binary, all compositions, n=24           0.135 (    2s)   0.512 (   28s)   0.308 (  117s)   4.347 (  630s)   0.341 (  260s)
+fcc ternary, all compositions, n=12          0.135 (    1s)   0.160 (    1s)   0.228 (    9s)   0.515 (    3s)   0.010 (    4s)
+fcc ternary, all compositions, n=14          0.135 (    1s)   0.178 (    4s)   0.272 (   22s)   1.412 (    8s)   0.034 (   26s)
+fcc quaternary, all compositions, n=10       0.134 (    1s)   0.154 (    1s)   0.242 (    7s)   0.548 (    3s)   0.010 (    5s)
+fcc 15:5, n=20                               0.135 (    1s)   0.140 (    1s)   0.211 (    7s)   0.460 (    4s)   0.020 (    1s)

@@ -13,7 +13,7 @@ FCC3 = {3: 3, 4: 13, 5: 23, 6: 130, 7: 197, 8: 1267, 9: 2322, 10: 9332}
 FCC4 = {4: 7, 5: 9, 6: 110, 7: 211, 8: 2110, 9: 5471, 10: 32362}
 # Table VI: simple cubic
 SC = {2: 3, 3: 3, 4: 15}
-# Table IV: fcc superlattices (Sloane A045790)
+# Table IV: fcc superlattices (OEIS A159842)
 FCC_SUPER = [1, 2, 3, 7, 5, 10, 7, 20, 14, 18]
 
 

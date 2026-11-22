@@ -1,0 +1,13 @@
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, Enumlib.jl 0.4.2 Julia 1.13.4
+problem                                      structures  Enumlib.jl   count    list  vs list
+fcc binary, all compositions, n=16               95,837        0.99    0.06    0.12      7.9
+fcc binary, all compositions, n=20            1,715,551       13.89    0.10    0.98     14.1
+fcc binary, all compositions, n=24           38,517,429      453.67    1.02   24.00     18.9
+fcc ternary, all compositions, n=12             734,567        1.06    0.06    0.55      1.9 (incl. structures lacking a type)
+fcc ternary, all compositions, n=14           4,725,708        5.91    0.10    2.45      2.4 (incl. structures lacking a type)
+fcc quaternary, all compositions, n=10          938,454        0.75    0.04    0.53      1.4 (incl. structures lacking a type)
+fcc 15:5, n=20                                   26,199        3.86    0.08    0.09     44.5
+fcc 24:8, n=32                               22,697,848     timeout    1.39   17.44        -
+fcc 10:5:5, n=20                             73,095,238     timeout    1.37   40.18        -
+hcp binary, all compositions, 24 sites       33,718,390      206.96    3.44   47.20      4.4
+hcp ternary, all compositions, 16 sites      49,947,870       39.89    7.40   82.42      0.5 (incl. structures lacking a type)
