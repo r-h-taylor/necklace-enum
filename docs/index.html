@@ -36,10 +36,14 @@
 
 <p>Necklace Enum lists the symmetrically distinct derivative superstructures of a parent lattice &mdash; the ways of
 decorating it with several kinds of atom &mdash; by generating each one directly instead of filtering out duplicates.
-Reading the sites of a superlattice column by column along the largest cyclic factor of its quotient group turns
-every decoration into a word on which translations act as rotations, so the distinct structures are Lyndon words
-and can be produced with a necklace algorithm. The Python package reproduces all published counts and is one to
-two orders of magnitude faster than earlier codes.</p>
+The quotient group of a superlattice is a discrete torus. Reading its sites column by column along the largest
+cyclic factor turns every decoration into a word on which translations act as rotations combined with one
+permutation applied to every letter, so the distinct structures are Lyndon words and can be produced with a
+necklace algorithm. Nothing about earlier structures is stored, so memory does not grow with the number of
+structures: counting 9.2 billion structures stays within 10&nbsp;MB of the interpreter's baseline, and listing
+stays below 0.22&nbsp;GB on problems where enumlib needs gigabytes or runs out of memory. The package reproduces
+all published counts and on most problems tested lists structures several times faster than enumlib and
+Enumlib.jl, and up to 82 times faster than dsenum.</p>
 
 <ul>
   <li><a href="https://github.com/r-h-taylor/necklace-enum/archive/refs/heads/main.zip">Download the package</a> &mdash; <a href="https://github.com/r-h-taylor/necklace-enum">GitHub</a> &mdash; <a href="https://doi.org/10.5281/zenodo.24330096">DOI</a></li>
