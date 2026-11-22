@@ -14,6 +14,7 @@ import argparse
 import os
 import platform
 import re
+import signal
 import subprocess
 import sys
 import tempfile
@@ -45,12 +46,25 @@ BIG = [
 BASE = ("baseline (tiny cell)", "fcc", 2, 2, None)
 
 
+
+def run_group(cmd, cwd=None, timeout=None):
+    """subprocess.run with a timeout that also kills grandchildren (e.g. enum.x under /usr/bin/time)."""
+    p = subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                         start_new_session=True)
+    try:
+        out, err = p.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        os.killpg(p.pid, signal.SIGKILL)
+        p.communicate()
+        raise
+    return subprocess.CompletedProcess(cmd, p.returncode, out, err)
+
 def timed(cmd, cwd=None, timeout=1800):
     """Run cmd under /usr/bin/time; return (peak GB, wall s, status, stdout)."""
     darwin = platform.system() == "Darwin"
     full = (["/usr/bin/time", "-l"] if darwin else ["/usr/bin/time", "-v"]) + cmd
     try:
-        p = subprocess.run(full, cwd=cwd, capture_output=True, text=True, timeout=timeout)
+        p = run_group(full, cwd=cwd, timeout=timeout)
     except subprocess.TimeoutExpired:
         return None, None, "timeout", ""
     # macOS: "peak memory footprint" counts memory the system has compressed or swapped out,

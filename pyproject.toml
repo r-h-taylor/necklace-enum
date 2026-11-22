@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "necklace-enum"
-version = "0.2.0"
+version = "0.2.1"
 description = "Derivative superstructures generated as Lyndon words on the quotient group of a superlattice"
 readme = "README.md"
 license = "MIT"

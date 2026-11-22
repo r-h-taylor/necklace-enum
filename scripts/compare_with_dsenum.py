@@ -57,10 +57,12 @@ QUICK = [
 ]
 
 
-def best(f, repeat):
-    f()                                                    # warm-up / JIT
+def best(f, repeat, cooldown=0, warmup=True):
+    if warmup:
+        f()                                                # warm-up / JIT
     ts, out = [], None
     for _ in range(repeat):
+        time.sleep(cooldown)                               # start each timed run cool (fanless machines)
         t = time.perf_counter()
         out = f()
         ts.append(time.perf_counter() - t)
@@ -104,20 +106,22 @@ def main():
     ap.add_argument("--quick", action="store_true")
     ap.add_argument("--repeat", type=int, default=3)
     ap.add_argument("--no-list", action="store_true", help="skip the listing comparison")
+    ap.add_argument("--cooldown", type=float, default=0,
+                    help="seconds to pause before each timed run, so a fanless machine starts every run cool")
     a = ap.parse_args()
-    print(f"# {platform.platform()}, {platform.processor() or platform.machine()}, Python {platform.python_version()}")
+    print(f"# {platform.platform()}, {platform.processor() or platform.machine()}, Python {platform.python_version()}, cooldown {a.cooldown:g} s")
     print(f"{'problem':42s} {'structures':>12s} {'count: dsenum':>14s} {'necklace':>9s}"
           + ("" if a.no_list else f" {'list: dsenum':>13s} {'necklace':>9s}"))
     for name, parent, base, n, k, comp in (QUICK if a.quick else PROBLEMS):
         P, B = parent(k), base()
-        c_ds, t_ds = best(lambda: ds_count(B, n, k, comp), a.repeat)
-        c_ne, t_ne = best(lambda: ne_count(P, n, comp), a.repeat)
+        c_ds, t_ds = best(lambda: ds_count(B, n, k, comp), a.repeat, a.cooldown, warmup=False)
+        c_ne, t_ne = best(lambda: ne_count(P, n, comp), a.repeat, a.cooldown)
         line = f"{name:42s} {c_ne:>12,d} {t_ds:14.2f} {t_ne:9.2f}"
         if c_ds != c_ne:
             line += f"  COUNT MISMATCH: dsenum {c_ds:,d}"
         if not a.no_list:
-            l_ds, tl_ds = best(lambda: ds_list(B, n, k, comp), 1)
-            l_ne, tl_ne = best(lambda: ne_list(P, n, comp), 1)
+            l_ds, tl_ds = best(lambda: ds_list(B, n, k, comp), 1, a.cooldown, warmup=False)
+            l_ne, tl_ne = best(lambda: ne_list(P, n, comp), 1, a.cooldown)
             line += f" {tl_ds:13.2f} {tl_ne:9.2f}"
             if not (l_ds == l_ne == c_ne):
                 line += f"  LIST MISMATCH: {l_ds:,d} / {l_ne:,d}"

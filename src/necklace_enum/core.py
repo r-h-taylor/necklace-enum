@@ -294,6 +294,29 @@ def enumerate_structures(parent: Parent, sizes, composition=None, label_exchange
                     _run(parent, n, True, label_exchange, composition, include_incomplete, None))
 
 
+def enumerate_labelings(parent: Parent, sizes, composition=None, label_exchange=False,
+                        include_incomplete=False):
+    """Fast listing: yield the structures as arrays of labelings, without a Python object per structure.
+
+    Yields ``(hnf, labels)`` pairs. ``hnf`` is a superlattice in Hermite normal form and
+    ``labels`` is an integer array of shape ``(r, n * d)``: each row is one derivative
+    structure on that superlattice, in the site order of :class:`Structure` (``labels[j, i * n + g]``
+    is the species index on basis site i at quotient-group element g). Rows come in batches of
+    at most ``LIST_BATCH`` words, so memory stays fixed. The same array may be yielded for
+    several superlattices that share a Smith normal form and symmetry; treat it as read-only.
+
+    ``Structure(parent, hnf, tuple(row))`` rebuilds the object that :func:`enumerate_structures`
+    would give. Parameters are as for :func:`enumerate_structures`.
+    """
+    dt = np.int8 if parent.k <= 127 else np.int64
+    for n in _sizes(sizes):
+        for Hs, labs in _run(parent, n, "batch", label_exchange, composition, include_incomplete, None):
+            labs = np.ascontiguousarray(labs, dtype=dt)
+            labs.flags.writeable = False
+            for H in Hs:
+                yield H, labs
+
+
 def count_structures(parent: Parent, sizes, composition=None, label_exchange=False,
                      include_incomplete=False, stats=None):
     """Number of derivative structures for each size, without listing them.

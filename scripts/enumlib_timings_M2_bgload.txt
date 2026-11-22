@@ -1,0 +1,13 @@
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, cooldown 60 s
+problem                                      structures  enumlib (s)  mem (GB)  count (s)  list (s)  vs list
+fcc binary, all compositions, n=16               95,837         0.73      0.01       0.06      0.15     4.9
+fcc binary, all compositions, n=20            1,715,551         7.37      0.02       0.11      1.06     6.9
+fcc binary, all compositions, n=24           38,517,429       182.08      0.35       1.04     22.63     8.0
+fcc ternary, all compositions, n=12             713,147         2.61      0.01       0.05      0.48     5.5
+fcc ternary, all compositions, n=14           4,670,898        15.16      0.03       0.09      2.23     6.8
+fcc quaternary, all compositions, n=10          723,876         2.85      0.01       0.03      0.40     7.1
+fcc 15:5, n=20                                   26,199         0.99      0.02       0.07      0.08      12
+fcc 24:8, n=32                               22,697,848       260.16     50.99       1.69     19.10      14
+fcc 10:5:5, n=20                             73,095,238       255.15      0.77       1.39     42.21     6.0
+hcp binary, all compositions, 24 sites       33,718,390       232.21      0.80       3.77     49.04     4.7
+hcp ternary, all compositions, 16 sites      49,700,010       317.63      1.40       6.69     87.70     3.6

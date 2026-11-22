@@ -54,6 +54,15 @@ necklace-enum count fcc 2 2-23 --label-exchange          # Hart & Forcade, Table
 necklace-enum list hcp Mg,Cd 4 --composition 5,3 --format extxyz -o out.xyz
 ```
 
+**Fast listing as arrays.** `enumerate_labelings` takes the same arguments as `enumerate_structures` but hands the
+structures to Python as rows of integer arrays, in batches, instead of one `Structure` object each. It is several
+times faster and is the form to use when the structures go straight into NumPy code or a file:
+
+```python
+for H, labels in te.enumerate_labelings(P, 12):     # labels: (rows, sites) array, one structure per row
+    ...                                              # te.Structure(P, H, tuple(row)) rebuilds an object
+```
+
 **Counting without listing.** `count_structures_burnside` gives the same counts as `count_structures`, with the
 same arguments, by Burnside's lemma: it sums fixed points over the symmetry operations of each superlattice instead
 of generating structures. Its cost grows with the number of superlattices, not structures, so it reaches far larger
@@ -124,8 +133,9 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
   listing streams structures from the compiled kernel in batches of 2^16 words. Counting stays within 10 MB of the
   85 MB interpreter baseline up to 9.2 billion structures; listing stays below 0.22 GB
   (`scripts/memory_compare.py`).
-- `enumerate_structures` builds a Python object per structure, so listing is far slower than counting. Use counts
-  or fixed compositions for very large runs.
+- `enumerate_structures` builds a Python object per structure, so listing that way is far slower than counting.
+  `enumerate_labelings` hands over arrays instead and is several times faster; use it, counts or fixed compositions
+  for very large runs.
 - The per-superlattice setup is plain Python and takes a few tenths of a second per size. For dilute fixed-composition
   runs it is larger than the labeling time.
 - Letters hold `d * d1 * d2` sites. For multilattices with many sites and species the letter tables can grow large,
@@ -134,6 +144,8 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
 
 ## Changes
 
+- **0.2.1** (22 Nov 2026): `enumerate_labelings`, fast listing as arrays of labelings; `--cooldown` option in the
+  benchmark scripts; `scripts/time_necklace.py`; PyPI release.
 - **0.2.0** (21 Nov 2026): streaming listing with constant memory (resumable kernel); Burnside counter
   (`burnside.py`); benchmark and comparison scripts against enumlib, Enumlib.jl and dsenum; structure-by-structure
   check against enumlib (`scripts/compare_structures_with_enumlib.py`); binary fcc counts to 43 sites

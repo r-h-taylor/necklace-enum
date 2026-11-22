@@ -72,21 +72,26 @@ def main():
     ap.add_argument("--julia", default="julia")
     ap.add_argument("--timeout", type=float, default=1800)
     ap.add_argument("--skip-resource-check", action="store_true")
+    ap.add_argument("--cooldown", type=float, default=0,
+                    help="seconds to pause before each timed run, so a fanless machine starts every run cool")
     a = ap.parse_args()
     v = subprocess.run([a.julia, "--startup-file=no", "-e", "using Enumlib; print(pkgversion(Enumlib), \" Julia \", VERSION)"],
                        capture_output=True, text=True).stdout.strip()
     te.count_structures(te.fcc(2), 4)
-    print(f"# {platform.platform()}, Python {platform.python_version()}, Enumlib.jl {v}")
+    print(f"# {platform.platform()}, Python {platform.python_version()}, Enumlib.jl {v}, cooldown {a.cooldown:g} s")
     print(f"{'problem':42s} {'structures':>12s} {'Enumlib.jl':>11s} {'count':>7s} {'list':>7s} {'vs list':>8s}")
     for name, parent, n, k, comp in ROWS:
+        time.sleep(a.cooldown)
         cj, tj, status = enumlibjl(a.julia, parent, n, k, comp, a.timeout, a.skip_resource_check)
         P = getattr(te, parent)(k)
         inc = False
         if cj is not None and k > 2 and comp is None:
             c0 = te.count_structures(P, n, label_exchange=False)[n]
             inc = cj != c0                       # Enumlib.jl may include structures lacking a type
+        time.sleep(a.cooldown)
         cnt, tc = best(lambda: te.count_structures(P, n, composition=comp, label_exchange=False,
                                                    include_incomplete=inc)[n], 3)
+        time.sleep(a.cooldown)
         _, tl = best(lambda: sum(1 for _ in te.enumerate_structures(P, n, composition=comp, label_exchange=False,
                                                                      include_incomplete=inc)), 1)
         flag = "" if (cj is None or cj == cnt) else f"  COUNT MISMATCH: Enumlib.jl {cj:,d}"

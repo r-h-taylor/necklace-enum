@@ -15,6 +15,7 @@ import argparse
 import os
 import platform
 import re
+import signal
 import subprocess
 import sys
 import tempfile
@@ -40,6 +41,19 @@ ROWS = [
     ("hcp ternary, all compositions, 16 sites", "hcp", 8, 3, None),
 ]
 
+
+
+def run_group(cmd, cwd=None, timeout=None):
+    """subprocess.run with a timeout that also kills grandchildren (e.g. enum.x under /usr/bin/time)."""
+    p = subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                         start_new_session=True)
+    try:
+        out, err = p.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        os.killpg(p.pid, signal.SIGKILL)
+        p.communicate()
+        raise
+    return subprocess.CompletedProcess(cmd, p.returncode, out, err)
 
 def enum_input(parent, n, k, comp):
     lab = "/".join(map(str, range(k)))
@@ -67,7 +81,7 @@ def run_enumlib(enumx, parent, n, k, comp, timeout):
         timer = []
     t = time.perf_counter()
     try:
-        p = subprocess.run(timer + [enumx], cwd=work, capture_output=True, text=True, timeout=timeout)
+        p = run_group(timer + [enumx], cwd=work, timeout=timeout)
     except subprocess.TimeoutExpired:
         return None, None, "timeout"
     wall = time.perf_counter() - t
@@ -81,15 +95,17 @@ def run_enumlib(enumx, parent, n, k, comp, timeout):
     return wall, mem, status
 
 
-def run_necklace(parent, n, k, comp):
+def run_necklace(parent, n, k, comp, cooldown=0):
     """Count (best of three) and list (one run) without label exchange; warm-up first."""
     P = getattr(te, parent)(k)
     f = lambda: te.count_structures(P, n, composition=comp, label_exchange=False)[n]
     f()
+    time.sleep(cooldown)
     best, c = None, None
     for _ in range(3):
         t = time.perf_counter(); c = f(); dt = time.perf_counter() - t
         best = dt if best is None else min(best, dt)
+    time.sleep(cooldown)
     t = time.perf_counter()
     sum(1 for _ in te.enumerate_structures(P, n, composition=comp, label_exchange=False))
     return c, best, time.perf_counter() - t
@@ -99,15 +115,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("enumx")
     ap.add_argument("--timeout", type=float, default=1800)
+    ap.add_argument("--cooldown", type=float, default=0,
+                    help="seconds to pause before each timed run, so a fanless machine starts every run cool")
     a = ap.parse_args()
     enumx = os.path.abspath(os.path.expanduser(a.enumx))
     if not os.access(enumx, os.X_OK):
         sys.exit(f"not an executable: {enumx}")
     te.count_structures(te.fcc(2), 4)
-    print(f"# {platform.platform()}, Python {platform.python_version()}")
+    print(f"# {platform.platform()}, Python {platform.python_version()}, cooldown {a.cooldown:g} s")
     print(f"{'problem':42s} {'structures':>12s} {'enumlib (s)':>12s} {'mem (GB)':>9s} {'count (s)':>10s} {'list (s)':>9s} {'vs list':>8s}")
     for name, parent, n, k, comp in ROWS:
-        c, tc, tn = run_necklace(parent, n, k, comp)
+        c, tc, tn = run_necklace(parent, n, k, comp, a.cooldown)
+        time.sleep(a.cooldown)
         te_, mem, status = run_enumlib(enumx, parent, n, k, comp, a.timeout)
         el = f"{te_:12.2f}" if te_ is not None else f"{status:>12s}"
         if status not in ("ok", "timeout"):
