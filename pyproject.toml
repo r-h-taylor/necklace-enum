@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,20 +7,30 @@ name = "necklace-enum"
 version = "0.2.0"
 description = "Derivative superstructures generated as Lyndon words on the quotient group of a superlattice"
 readme = "README.md"
-license = {text = "MIT"}
-authors = [{name = "Richard H. Taylor"}]
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Richard H. Taylor", email = "r_taylor@outlook.com"}]
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.24", "numba>=0.59"]
-keywords = ["derivative structures", "enumeration", "alloys", "cluster expansion", "Lyndon words"]
+keywords = ["derivative structures", "enumeration", "alloys", "cluster expansion", "Lyndon words", "necklaces", "Hart-Forcade"]
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Scientific/Engineering :: Chemistry",
 ]
 
 [project.urls]
+Homepage = "https://r-h-taylor.github.io/necklace-enum/"
 Repository = "https://github.com/r-h-taylor/necklace-enum"
+Paper = "https://r-h-taylor.github.io/necklace-enum/necklace-enum.pdf"
+Archive = "https://doi.org/10.5281/zenodo.24330096"
 
 [project.optional-dependencies]
 ase = ["ase>=3.22"]

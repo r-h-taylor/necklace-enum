@@ -20,9 +20,15 @@ canonical structures are Lyndon words, which are generated directly with an exte
 ## Install
 
 ```bash
-pip install .            # numpy + numba
-pip install ".[ase]"     # to export ASE Atoms
-pip install ".[test]"    # to run the tests
+pip install necklace-enum            # numpy + numba
+pip install "necklace-enum[ase]"     # to export ASE Atoms
+```
+
+From a clone of this repository (needed for the tests and the benchmark scripts):
+
+```bash
+pip install ".[test]"
+pytest
 ```
 
 ## Use
