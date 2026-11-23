@@ -1,6 +1,6 @@
 """necklace_enum: derivative structures generated as Lyndon words on the quotient group.
 
-Reference implementation for R. H. Taylor, "Toroidal necklaces for low-memory derivative structure enumeration".
+Reference implementation for R. H. Taylor, "Algorithm for low-memory derivative structure enumeration using toroidal necklaces".
 """
 from .burnside import count_structures_burnside
 from .core import Structure, count_structures, enumerate_labelings, enumerate_structures

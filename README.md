@@ -9,7 +9,7 @@ Project page: https://r-h-taylor.github.io/necklace-enum/ · Archived at Zenodo:
 
 This is the reference implementation for
 
-> R. H. Taylor, *Toroidal necklaces for low-memory derivative structure enumeration* (2026).
+> R. H. Taylor, *Algorithm for low-memory derivative structure enumeration using toroidal necklaces* (2026).
 
 It keeps the superlattice and Smith-normal-form construction of Hart & Forcade
 ([Phys. Rev. B 77, 224115 (2008)](https://doi.org/10.1103/PhysRevB.77.224115)) and replaces their duplicate-removal

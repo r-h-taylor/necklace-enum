@@ -18,7 +18,7 @@ doi: "10.5281/zenodo.24330095"
 repository-code: "https://github.com/r-h-taylor/necklace-enum"
 preferred-citation:
   type: article
-  title: "Toroidal necklaces for low-memory derivative structure enumeration"
+  title: "Algorithm for low-memory derivative structure enumeration using toroidal necklaces"
   authors:
     - family-names: Taylor
       given-names: Richard H.
