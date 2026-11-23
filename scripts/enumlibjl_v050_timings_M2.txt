@@ -1,13 +1,13 @@
 # macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, Enumlib.jl 0.5.0 Julia 1.13.4, cooldown 60 s
 problem                                      structures  Enumlib.jl   count    list  vs list
-fcc binary, all compositions, n=16               95,837        0.41    0.06    0.15      2.8
-fcc binary, all compositions, n=20            1,715,551        7.60    0.11    1.07      7.1
-fcc binary, all compositions, n=24           38,517,429      212.83    1.06   23.26      9.2
-fcc ternary, all compositions, n=12             734,567        0.51    0.06    0.53      1.0 (incl. structures lacking a type)
-fcc ternary, all compositions, n=14           4,725,708        2.79    0.09    2.33      1.2 (incl. structures lacking a type)
-fcc quaternary, all compositions, n=10          938,454        0.42    0.04    0.59      0.7 (incl. structures lacking a type)
-fcc 15:5, n=20                                   26,199        1.59    0.07    0.08     19.9
-fcc 24:8, n=32                               22,697,848     2134.44    1.55   17.38    122.8
-fcc 10:5:5, n=20                             73,095,238     timeout    1.40   41.48        -
-hcp binary, all compositions, 24 sites       33,718,390      110.00    3.67   47.75      2.3
-hcp ternary, all compositions, 16 sites      49,947,870       26.02    6.99   85.21      0.3 (incl. structures lacking a type)
+fcc binary, all compositions, n=16               95,837        0.34    0.05    0.18      1.9
+fcc binary, all compositions, n=20            1,715,551        5.75    0.09    0.86      6.7
+fcc binary, all compositions, n=24           38,517,429      171.28    0.88   18.52      9.2
+fcc ternary, all compositions, n=12             734,567        0.36    0.05    0.42      0.8 (incl. structures lacking a type)
+fcc ternary, all compositions, n=14           4,725,708        1.91    0.08    1.90      1.0 (incl. structures lacking a type)
+fcc quaternary, all compositions, n=10          938,454        0.32    0.03    0.47      0.7 (incl. structures lacking a type)
+fcc 15:5, n=20                                   26,199        1.13    0.06    0.07     16.2
+fcc 24:8, n=32                               22,697,848     1420.29    1.30   14.39     98.7
+fcc 10:5:5, n=20                             73,095,238     timeout    1.14   33.16        -
+hcp binary, all compositions, 24 sites       33,718,390       87.77    2.96   38.51      2.3
+hcp ternary, all compositions, 16 sites      49,947,870       21.05    5.65   67.73      0.3 (incl. structures lacking a type)

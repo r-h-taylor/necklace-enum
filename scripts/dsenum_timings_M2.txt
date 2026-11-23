@@ -2,14 +2,14 @@
   rotations = sym_dataset["rotations"]
 # macOS-26.6.2-arm64-arm-64bit, arm, Python 3.11.1, cooldown 60 s
 problem                                      structures  count: dsenum  necklace  list: dsenum  necklace
-fcc binary, all compositions, n=16               95,837           1.44      0.06          1.49      0.16
-fcc binary, all compositions, n=20            1,715,551           6.73      0.10          9.51      0.98
-fcc binary, all compositions, n=24           38,517,429          79.42      1.02        150.51     22.12
-fcc ternary, all compositions, n=12             713,147           4.71      0.05          5.93      0.51
-fcc ternary, all compositions, n=14           4,670,898          13.40      0.09         27.21      2.88
-fcc quaternary, all compositions, n=10          723,876           3.25      0.04          3.86      0.46
-fcc 15:5, n=20                                   26,199           2.76      0.07          2.86      0.09
-fcc 24:8, n=32                               22,697,848         979.26      1.60       1021.82     20.22
-fcc 10:5:5, n=20                             73,095,238        2938.39      1.23       2440.05     35.77
-hcp binary, all compositions, 24 sites       33,718,390           9.06      3.23         63.65     40.98
-hcp ternary, all compositions, 16 sites      49,700,010          15.52      6.05         90.87     72.54
+fcc binary, all compositions, n=16               95,837           1.23      0.10          1.32      0.17
+fcc binary, all compositions, n=20            1,715,551           6.05      0.14          8.41      0.91
+fcc binary, all compositions, n=24           38,517,429          64.64      0.93        122.50     18.69
+fcc ternary, all compositions, n=12             713,147           4.40      0.10          4.99      0.45
+fcc ternary, all compositions, n=14           4,670,898          10.98      0.12         17.79      1.91
+fcc quaternary, all compositions, n=10          723,876           2.34      0.07          3.23      0.38
+fcc 15:5, n=20                                   26,199           2.91      0.11          2.92      0.12
+fcc 24:8, n=32                               22,697,848         765.11      1.35        800.06     14.42
+fcc 10:5:5, n=20                             73,095,238        2174.97      1.18       2296.02     33.18
+hcp binary, all compositions, 24 sites       33,718,390           9.90      3.01         59.72     41.58
+hcp ternary, all compositions, 16 sites      49,700,010          16.28      5.60         86.85     75.29
