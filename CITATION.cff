@@ -14,7 +14,7 @@ keywords:
   - enumeration
   - Lyndon words
   - Hart-Forcade
-doi: "10.5281/zenodo.24330096"
+doi: "10.5281/zenodo.24330095"
 repository-code: "https://github.com/r-h-taylor/necklace-enum"
 preferred-citation:
   type: article

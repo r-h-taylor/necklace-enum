@@ -46,12 +46,11 @@ all published counts and lists structures faster than enumlib, Enumlib.jl and ds
 by up to nearly three orders of magnitude.</p>
 
 <ul>
-  <li><a href="https://github.com/r-h-taylor/necklace-enum/archive/refs/heads/main.zip">Download the package</a> &mdash; <a href="https://github.com/r-h-taylor/necklace-enum">GitHub</a> &mdash; <a href="https://doi.org/10.5281/zenodo.24330096">DOI</a></li>
+  <li><a href="https://pypi.org/project/necklace-enum/">PyPI</a> &mdash; <a href="https://github.com/r-h-taylor/necklace-enum">GitHub</a> &mdash; <a href="https://doi.org/10.5281/zenodo.24330095">DOI</a></li>
   <li class="use">
-    <p>Unzip the download, open a terminal in the folder and run <code>pip install .</code>
-    (Python 3.10 or later; NumPy and Numba are installed automatically). Running
-    <code>python check_necklace_enum.py</code> then checks the installation against the published counts and an
-    independent brute-force code, and times it against the Hart&ndash;Forcade algorithm. In Python:</p>
+    <p>Install with <code>pip install necklace-enum</code> (Python 3.10 or later; NumPy and Numba are installed
+    automatically). The tests, the checks against the published counts and an independent brute-force code, and the
+    benchmark scripts are in the <a href="https://github.com/r-h-taylor/necklace-enum">repository</a>. In Python:</p>
 <pre>import necklace_enum as te
 
 P = te.fcc(["Cu", "Au"])
