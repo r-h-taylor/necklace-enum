@@ -185,6 +185,30 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
   (`scripts/oeis_counts.py`); current paper in `docs/`.
 - **0.1.0** (18 Nov 2026): first release.
 
-## License
+## License and citation
 
-MIT. If you use this code, please cite the paper above and Hart & Forcade (2008).
+MIT. If you use this code, please cite:
+
+1. R. H. Taylor, *Algorithm for low-memory derivative structure enumeration using toroidal necklaces* (2026).
+   Software: necklace-enum, Zenodo, [doi:10.5281/zenodo.24330095](https://doi.org/10.5281/zenodo.24330095).
+2. G. L. W. Hart and R. W. Forcade, *Algorithm for generating derivative structures*,
+   Phys. Rev. B **77**, 224115 (2008), [doi:10.1103/PhysRevB.77.224115](https://doi.org/10.1103/PhysRevB.77.224115).
+
+```bibtex
+@article{Taylor2026necklace,
+  author = {Taylor, Richard H.},
+  title  = {Algorithm for low-memory derivative structure enumeration using toroidal necklaces},
+  year   = {2026},
+  note   = {Software: necklace-enum, doi:10.5281/zenodo.24330095}
+}
+
+@article{HartForcade2008,
+  author  = {Hart, Gus L. W. and Forcade, Rodney W.},
+  title   = {Algorithm for generating derivative structures},
+  journal = {Phys. Rev. B},
+  volume  = {77},
+  pages   = {224115},
+  year    = {2008},
+  doi     = {10.1103/PhysRevB.77.224115}
+}
+```
