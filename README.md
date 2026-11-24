@@ -63,6 +63,32 @@ for H, labels in te.enumerate_labelings(P, 12):     # labels: (rows, sites) arra
     ...                                              # te.Structure(P, H, tuple(row)) rebuilds an object
 ```
 
+**Degeneracies (weights for statistical mechanics).** Every structure carries its degeneracy, at fixed
+composition as well as over all compositions: `s.degeneracy` is the number of labelings of its superlattice that are
+equivalent to it (enumlib's `labdegn`), `s.superlattice_degeneracy` the number of equivalent superlattices of the same
+size (`Hdegn`), and `s.total_degeneracy` their product (`Totdegn`), the weight g in a partition function
+sum g exp(-E/kT). Summed over all structures of one size, the total degeneracies count every labeling of every
+superlattice exactly once. They come out of the generator itself: while testing a word for canonicity it compares
+the word with its images under the symmetry operations, and the comparisons that end equal are its stabilizer, so
+degeneracy = group order / stabilizer order at no extra pass and no measurable cost.
+
+```python
+for s in te.enumerate_structures(P, 8, composition=(6, 2)):
+    print(s.labels, s.degeneracy, s.superlattice_degeneracy, s.total_degeneracy)
+
+for H, labels, g in te.enumerate_labelings(P, 12, composition=(9, 3), degeneracy=True):
+    weights = g * te.superlattice_degeneracy(P, H)  # one weight per row of labels
+
+stats = {}
+te.count_structures(P, 12, stats=stats)              # stats["weight"]: sum of total degeneracies
+```
+
+```bash
+necklace-enum list fcc Cu,Au 8 --composition 6,2 --degeneracy      # columns: g on cell, equivalent cells, total
+```
+
+`to_ase()` stores the three numbers in `atoms.info`, so they are kept in extended XYZ files.
+
 **Counting without listing.** `count_structures_burnside` gives the same counts as `count_structures`, with the
 same arguments, by Burnside's lemma: it sums fixed points over the symmetry operations of each superlattice instead
 of generating structures. Its cost grows with the number of superlattices, not structures, so it reaches far larger
@@ -103,8 +129,9 @@ enumlib's `makeStr.py` and `makestr.x` (which pymatgen calls) build POSCAR files
 The output follows enumlib's conventions:
 - A "partial" listing without concentration restrictions identifies structures related by swapping species, as in
   Hart & Forcade's tables. "Full" listings and concentration-restricted runs list them separately.
-- The degeneracy columns are exact: `Totdegn` summed over a cell size equals the number of (superlattice, labeling)
-  pairs the structures stand for. enumlib writes `labdegn = 0` in its fixed-concentration mode.
+- The degeneracy columns are exact, in every mode: `Totdegn` summed over a cell size equals the number of
+  (superlattice, labeling) pairs the structures stand for. enumlib writes `labdegn = 0` in its fixed-concentration
+  mode; necklace-enum fills it in there too.
 
 `scripts/compare_with_enumlib.py` runs both programs on the same input and compares the results.
 
@@ -122,7 +149,7 @@ The tests compare the generated structures, one by one, with an independent brut
 simple-cubic and hcp parents (including site restrictions and fixed compositions). They also reproduce every count
 tabulated by Hart & Forcade, compare the Burnside counter with the generator over parents, species counts,
 compositions and site restrictions, and check that each exported crystal is primitive in its own cell and that no two
-exported crystals are symmetry-equivalent. The enumlib-format tests rebuild every structure from the written file with enumlib's indexing rule and check the degeneracy columns against a direct count. `tests/hart_forcade.py` is a compiled reference implementation of the 2008 algorithm, used to check counts and to compare speed.
+exported crystals are symmetry-equivalent. The enumlib-format tests rebuild every structure from the written file with enumlib's indexing rule and check the degeneracy columns against a direct count. `tests/test_degeneracy.py` checks the generator's degeneracies against an independent pass that applies every operation of each superlattice's group, over Bravais and multilattice parents, label exchange, fixed compositions and site restrictions, and checks that the total degeneracies count every labeling of every superlattice, by direct enumeration. `tests/hart_forcade.py` is a compiled reference implementation of the 2008 algorithm, used to check counts and to compare speed.
 
 ## Performance and limits
 
@@ -144,6 +171,12 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
 
 ## Changes
 
+- **0.3.0** (24 Nov 2026): degeneracies computed inside the generator, in every mode including fixed composition:
+  `Structure.degeneracy`, `.superlattice_degeneracy`, `.total_degeneracy`; `enumerate_labelings(..., degeneracy=True)`;
+  `superlattice_degeneracy()`; `count_structures(..., stats=...)` reports the total weight; `--degeneracy` on the
+  command line; degeneracies in `to_ase()` info; the enumlib-format writer uses them (no separate pass).
+  `examples/necklace-try.sh`, a short command-line tour; `scripts/sweep_binary_fcc.py`; benchmark logs now record
+  the Enumlib.jl version.
 - **0.2.1** (22 Nov 2026): `enumerate_labelings`, fast listing as arrays of labelings; `--cooldown` option in the
   benchmark scripts; `scripts/time_necklace.py`; PyPI release.
 - **0.2.0** (21 Nov 2026): streaming listing with constant memory (resumable kernel); Burnside counter

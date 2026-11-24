@@ -42,8 +42,9 @@ permutation applied to every letter, so the distinct structures are Lyndon words
 necklace algorithm. Nothing about earlier structures is stored, so memory does not grow with the number of
 structures: counting 9.2 billion structures stays within 10&nbsp;MB of the interpreter's baseline, and listing
 stays below 0.22&nbsp;GB on problems where enumlib needs gigabytes or runs out of memory. The package reproduces
-all published counts and lists structures faster than enumlib, Enumlib.jl and dsenum on every problem tested,
-by up to nearly three orders of magnitude.</p>
+all published counts and lists structures ~2&ndash;90&times; faster than the fastest of enumlib, Enumlib.jl and
+dsenum on each problem tested. Each structure comes with its degeneracy, its weight in a partition function, at
+fixed composition as well, taken from the generator's own symmetry comparisons.</p>
 
 <ul>
   <li><a href="https://pypi.org/project/necklace-enum/">PyPI</a> &mdash; <a href="https://github.com/r-h-taylor/necklace-enum">GitHub</a> &mdash; <a href="https://doi.org/10.5281/zenodo.24330095">DOI</a></li>
@@ -58,9 +59,10 @@ P = te.fcc(["Cu", "Au"])
 # number of structures for each cell size
 te.count_structures(P, range(1, 13))
 
-# every Cu6Au2 structure with 8 atoms per cell, as ASE Atoms
+# every Cu6Au2 structure with 8 atoms per cell, as ASE Atoms, with its weight g
 for s in te.enumerate_structures(P, 8, composition={"Cu": 6, "Au": 2}):
-    atoms = s.to_ase()</pre>
+    atoms = s.to_ase()
+    g = s.total_degeneracy</pre>
     <p>Other parents are <code>te.bcc</code>, <code>te.sc</code> and <code>te.hcp</code>, or <code>te.Parent</code>
     for any lattice and basis, with optional site restrictions. Exporting to ASE needs <code>pip install ase</code>.
     The README describes all options and the <code>necklace-enum</code> command-line tool.</p>

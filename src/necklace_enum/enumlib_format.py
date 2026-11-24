@@ -187,14 +187,14 @@ def write_struct_enum(file, parent: Parent, sizes, composition=None, include_inc
             info = {}
             size_count = 0
             for comp in runs:
-                for Hs, labs in _run(parent, n, "batch", label_exchange, comp, include_incomplete, None):
+                for Hs, labs, degs, _ in _run(parent, n, "batch", label_exchange, comp, include_incomplete, None):
                     strings = (labs.astype(np.uint8) + 48).view(f"S{labs.shape[1]}").ravel()
                     for H in Hs:
                         key = tuple(np.asarray(H).ravel())
                         h = info.get(key)
                         if h is None:
                             h = info[key] = _HNFInfo(parent, np.asarray(H), hnf_number[key])
-                        lds = h.labdegn(labs, LG)
+                        lds = degs                     # from the generator's symmetry comparisons
                         rows = []
                         for ld, lab in zip(lds.tolist(), strings):
                             tot += 1

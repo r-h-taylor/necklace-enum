@@ -66,8 +66,12 @@ def main():
         t_dsc, t_dsl = num(ds[key][1]), num(ds[key][3])
         t_c, t_a, t_o = (num(x) for x in ne[key][1:4])
         d = r"$^\dagger$" if dagger else ""
+        best = min(t for t in (t_el, t_jl, t_dsl) if t is not None)
+        sp = best / t_a
+        ratios.setdefault("best_arr", []).append((sp, key))
+        sps = f"{sp:.1f}" if sp < 10 else f"{sp:.0f}"
         lines.append(f"{tex} & {n_struct.replace(',', chr(92) + ',')} & {fmt(t_el)}{d} & {fmt(t_jl)}{d} & "
-                     f"{fmt(t_dsc)} & {fmt(t_dsl)} & {fmt(t_c)} & {fmt(t_a)} & {fmt(t_o)}\\\\")
+                     f"{fmt(t_dsc)} & {fmt(t_dsl)} & {fmt(t_c)} & {fmt(t_a)} & {fmt(t_o)} & {sps}\\\\")
         ratios["el_obj"].append((t_el / t_o, key))
         ratios["el_arr"].append((t_el / t_a, key))
         if t_jl is not None:
@@ -80,6 +84,8 @@ def main():
     print("\n".join(lines))
     print()
     for k, v in ratios.items():
+        if not v:
+            continue
         lo, hi = min(v), max(v)
         print(f"{k:12s} {lo[0]:8.2f} ({lo[1]})  ..  {hi[0]:8.1f} ({hi[1]})")
     fcc = [r for r in ratios["ds_obj"] if r[1].startswith("fcc")]

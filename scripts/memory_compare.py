@@ -147,6 +147,11 @@ def main():
     if "dsenum" in codes: cols += ["dsenum count"]
     if "enumlibjl" in codes: cols += ["Enumlib.jl"]
     if "enumlib" in codes: cols += ["enumlib"]
+    if "enumlibjl" in a.codes:
+        import subprocess as _sp
+        _v = _sp.run([a.julia, "--startup-file=no", "-e", 'using Enumlib; print(pkgversion(Enumlib), " Julia ", VERSION)'],
+                     capture_output=True, text=True, stdin=_sp.DEVNULL).stdout.strip()
+        print(f"# Enumlib.jl {_v}, JULIA_PROJECT={os.environ.get('JULIA_PROJECT', '(default)')}", flush=True)
     print(f"# {platform.platform()}, Python {platform.python_version()}; peak resident memory in GB (wall time)")
     print(f"{'problem':42s} " + " ".join(f"{c:>14s}" for c in cols))
     for name, parent, n, k, comp in rows:

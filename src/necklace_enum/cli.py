@@ -7,6 +7,7 @@ Examples
     necklace-enum count fcc 2 1-60 --label-exchange --burnside   # counts only, no listing
     necklace-enum list hcp Mg,Cd 4 --composition 5,3 --format extxyz -o out.xyz
     necklace-enum list fcc Cu,Au 1-8 --format enum -o struct_enum.out
+    necklace-enum list fcc Cu,Au 8 --composition 6,2 --degeneracy   # with each structure's weight g
     necklace-enum enumlib [struct_enum.in]      # drop-in for enumlib's enum.x
 """
 from __future__ import annotations
@@ -59,6 +60,9 @@ def main(argv=None):
                     help="also list structures in which some species is absent")
     ap.add_argument("--burnside", action="store_true",
                     help="count by Burnside's lemma instead of generating (count only; reaches far larger sizes)")
+    ap.add_argument("--degeneracy", action="store_true",
+                    help="summary: also print each structure's degeneracy on its superlattice, the number of "
+                         "equivalent superlattices and their product (the weight g in a partition function)")
     ap.add_argument("-o", "--output", help="output file for --format other than summary")
     args = ap.parse_args(argv)
 
@@ -85,8 +89,13 @@ def main(argv=None):
     structs = enumerate_structures(P, sizes, composition=comp, label_exchange=args.label_exchange,
                                    include_incomplete=args.include_incomplete)
     if args.format == "summary":
+        if args.degeneracy:
+            print("# size  HNF  labeling  degeneracy  superlattice_degeneracy  total_degeneracy")
         for s in structs:
-            print(s.size, s.hnf.ravel().tolist(), "".join(str(P.species[x])[0] for x in s.labels))
+            row = [s.size, s.hnf.ravel().tolist(), "".join(str(P.species[x])[0] for x in s.labels)]
+            if args.degeneracy:
+                row += [s.degeneracy, s.superlattice_degeneracy, s.total_degeneracy]
+            print(*row)
         return 0
     from ase.io import write
     write(args.output or sys.stdout, [s.to_ase() for s in structs], format=args.format)

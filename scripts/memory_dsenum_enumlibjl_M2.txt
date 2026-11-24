@@ -1,0 +1,16 @@
+# NOTE (24 Nov 2026): the Enumlib.jl column of this log was run in the default Julia environment, which had
+# Enumlib.jl 0.4.2, not 0.5.0. Rerun with 0.5.0: sweep_binary_fcc_enumlibjl050_M2.txt and memory_enumlibjl050_M2.txt. Other columns are unaffected.
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1; peak resident memory in GB (wall time)
+problem                                      dsenum count     Enumlib.jl
+baseline (tiny cell)                         0.163 (    2s)   0.297 (    3s)
+fcc binary, all compositions, n=16           0.163 (    3s)   0.322 (    1s)
+fcc binary, all compositions, n=20           0.166 (    7s)   0.576 (    7s)
+fcc binary, all compositions, n=24           0.170 (   68s)   6.566 (  174s)
+fcc ternary, all compositions, n=12          0.164 (    6s)   0.394 (    1s)
+fcc ternary, all compositions, n=14          0.172 (   12s)   1.144 (    3s)
+fcc quaternary, all compositions, n=10       0.164 (    4s)   0.435 (    1s)
+fcc 15:5, n=20                               0.163 (    4s)   0.400 (    2s)
+fcc 24:8, n=32                               0.216 (  765s)  14.897 ( 1399s)
+fcc 10:5:5, n=20                             0.593 ( 2140s)        timeout
+hcp binary, all compositions, 24 sites       0.166 (   11s)   5.393 (   91s)
+hcp ternary, all compositions, 16 sites      0.169 (   16s)   9.536 (   22s)

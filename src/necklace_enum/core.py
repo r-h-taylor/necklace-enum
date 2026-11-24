@@ -8,7 +8,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from .kernel import product_tables, reversal_maps, split_reversal, torus_kernel, torus_kernel_resume
-from .lattice import Quotient, unique_superlattices
+from .lattice import Quotient, stabilizer, unique_superlattices
 from .parent import Parent
 
 LIST_BATCH = 1 << 16          # words per batch when listing; memory stays fixed at about this size
@@ -27,6 +27,21 @@ class Structure:
     parent: Parent
     hnf: np.ndarray
     labels: tuple
+    degeneracy: int | None = None
+    """Number of labelings of this superlattice equivalent to this one: the orbit size under the
+    superlattice's translations, the parent operations that leave it unchanged and (if used)
+    label exchange. enumlib's ``labdegn``."""
+    superlattice_degeneracy: int | None = None
+    """Number of superlattices (HNFs) of this size equivalent to this one; enumlib's ``Hdegn``."""
+
+    @property
+    def total_degeneracy(self):
+        """``degeneracy * superlattice_degeneracy``: the number of (superlattice, labeling) pairs this
+        structure stands for; summed over all structures of one size it counts every labeling of
+        every superlattice once (enumlib's ``Totdegn``). The weight g in a partition function."""
+        if self.degeneracy is None or self.superlattice_degeneracy is None:
+            return None
+        return self.degeneracy * self.superlattice_degeneracy
 
     @property
     def size(self):
@@ -55,7 +70,12 @@ class Structure:
     def to_ase(self):
         from ase import Atoms
         pos, spc = self.sites()
-        return Atoms(symbols=[str(s) for s in spc], positions=pos, cell=self.cell, pbc=True)
+        atoms = Atoms(symbols=[str(s) for s in spc], positions=pos, cell=self.cell, pbc=True)
+        if self.degeneracy is not None:              # kept in extended XYZ and other ASE formats
+            atoms.info["degeneracy"] = self.degeneracy
+            atoms.info["superlattice_degeneracy"] = self.superlattice_degeneracy
+            atoms.info["total_degeneracy"] = self.total_degeneracy
+        return atoms
 
     def to_pymatgen(self):
         from pymatgen.core import Lattice, Structure as PmgStructure
@@ -194,6 +214,14 @@ def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, s
         mask = np.zeros((len(keys), max(len(uni), 1)), dtype=np.bool_)
         for ci, key in enumerate(keys):
             mask[ci, list(key)] = True
+        # point operations per class: identity, the reversal (if split off) and the rest
+        npoint = 1 + (nu is not None) + mask.sum(axis=1).astype(np.int64)
+        cls_ptr = np.zeros(len(keys) + 1, dtype=np.int64)            # operations of each class, CSR
+        cls_ptr[1:] = np.cumsum(mask.sum(axis=1))
+        cls_ops = np.nonzero(mask)[1].astype(np.int64)
+        want = store or (stats is not None)                         # degeneracies only when asked for
+        hdeg = ({ci: [superlattice_degeneracy(P, q.H) for q in classes[key]] for ci, key in enumerate(keys)}
+                if want else None)
         q_alpha = k ** A_
         if q_alpha * max(1, len(LG) * (len(track_perms) + 1)) > 4_000_000:
             raise MemoryError(f"letter table too large for Smith normal form {q0.d} (k^{A_} letters)")
@@ -223,16 +251,24 @@ def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, s
             swtrans = np.array(swt, dtype=np.bool_)
             MU = reversal_maps(nu, digits, weights, SW)
             counts = np.zeros(len(keys), dtype=np.int64)
+            # group order on each superlattice: n translations x |lp| label exchanges x point operations
+            # (the kernel counts its elements as m rotations x (SW + identity) letterwise maps per
+            # point operation), and the factor that extends lp to the full label group LG
+            gsz = (m * (SW.shape[0] + 1)) * npoint
+            scale = len(LG) // len(lp)
+            degsum = np.zeros(len(keys), dtype=np.int64)
             if not store:
                 ns, nodes = torus_kernel(m, A_, k, c, symcnt, SW, swtrans, Rp, mask, counts,
                                          False, np.zeros((0, m), dtype=np.int64), np.zeros(0, dtype=np.int64),
-                                         allowed, MU, ISP, CM, LT)
+                                         allowed, MU, ISP, CM, LT, gsz, degsum, stats is not None,
+                                         np.zeros(0, dtype=np.int64), cls_ptr, cls_ops)
             else:
                 # Listing streams: the kernel fills a fixed buffer, pauses, and resumes where it
                 # stopped, so memory does not grow with the number of structures.
                 cap = max(LIST_BATCH, len(keys))
                 ow = np.zeros((cap, m), dtype=np.int64)
                 oc = np.zeros(cap, dtype=np.int64)
+                od = np.zeros(cap, dtype=np.int64)
                 W_ = max(SW.shape[0] * m, 1)
                 state = (np.zeros(k, dtype=np.int64), np.zeros(m + 1, dtype=np.int64),
                          np.zeros(m + 2, dtype=np.int64), np.full(m + 2, -1, dtype=np.int64),
@@ -243,26 +279,39 @@ def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, s
                 done = False
                 while not done:
                     ns, nodes, done = torus_kernel_resume(m, A_, k, c, symcnt, SW, swtrans, Rp, mask, counts,
-                                                          ow, oc, allowed, MU, ISP, CM, LT, *state)
+                                                          ow, oc, allowed, MU, ISP, CM, LT, od,
+                                                          cls_ptr, cls_ops, *state)
                     if ns == 0:
                         continue
                     # decode the batch: letter -> its A_ base-k digits -> site labels
                     flat = ((ow[:ns, :, None] // powers) % k).reshape(ns, m * A_)
                     labs = flat[:, phi]                                # (ns, N), site order
                     cls = oc[:ns].copy()
+                    degs = gsz[cls] // od[:ns] * scale                 # orbit = group order / stabilizer
+                    if stats is not None:
+                        np.add.at(degsum, cls, gsz[cls] // od[:ns])
                     if store == "batch":
                         for ci in np.unique(cls):
-                            yield [q.H for q in classes[keys[ci]]], labs[cls == ci]
+                            sel = cls == ci
+                            yield [q.H for q in classes[keys[ci]]], labs[sel], degs[sel], hdeg[ci]
                     else:
-                        for lab_row, ci in zip(labs, cls):
+                        for lab_row, ci, g in zip(labs, cls, degs.tolist()):
                             lab = tuple(int(x) for x in lab_row)
-                            for q in classes[keys[ci]]:
-                                yield q.H, lab
+                            for q, h in zip(classes[keys[ci]], hdeg[ci]):
+                                yield q.H, lab, g, h
             if stats is not None:
                 stats["nodes"] = stats.get("nodes", 0) + int(nodes)
             for ci, key in enumerate(keys):
                 total += int(counts[ci]) * len(classes[key])
+                if stats is not None:
+                    stats["weight"] = stats.get("weight", 0) + int(degsum[ci]) * scale * sum(hdeg[ci])
     return total
+
+
+def superlattice_degeneracy(parent: Parent, hnf):
+    """Number of superlattices (HNFs) of the same size equivalent to ``hnf`` under the parent's
+    point group: enumlib's ``Hdegn``."""
+    return len(parent.rots) // len(stabilizer(np.asarray(hnf), parent.rots))
 
 
 def _sizes(sizes):
@@ -290,12 +339,12 @@ def enumerate_structures(parent: Parent, sizes, composition=None, label_exchange
         Also list structures in which some species is absent.
     """
     for n in _sizes(sizes):
-        yield from (Structure(parent, H, lab) for H, lab in
+        yield from (Structure(parent, H, lab, g, h) for H, lab, g, h in
                     _run(parent, n, True, label_exchange, composition, include_incomplete, None))
 
 
 def enumerate_labelings(parent: Parent, sizes, composition=None, label_exchange=False,
-                        include_incomplete=False):
+                        include_incomplete=False, degeneracy=False):
     """Fast listing: yield the structures as arrays of labelings, without a Python object per structure.
 
     Yields ``(hnf, labels)`` pairs. ``hnf`` is a superlattice in Hermite normal form and
@@ -307,21 +356,31 @@ def enumerate_labelings(parent: Parent, sizes, composition=None, label_exchange=
 
     ``Structure(parent, hnf, tuple(row))`` rebuilds the object that :func:`enumerate_structures`
     would give. Parameters are as for :func:`enumerate_structures`.
+
+    With ``degeneracy=True`` the triples ``(hnf, labels, degeneracy)`` are yielded instead, where
+    ``degeneracy[j]`` is the number of labelings of ``hnf`` equivalent to row j (see
+    :attr:`Structure.degeneracy`). Multiply by :func:`superlattice_degeneracy` for the total weight.
+    The degeneracies come out of the generator's own symmetry comparisons, at no extra pass.
     """
     dt = np.int8 if parent.k <= 127 else np.int64
     for n in _sizes(sizes):
-        for Hs, labs in _run(parent, n, "batch", label_exchange, composition, include_incomplete, None):
+        for Hs, labs, degs, _ in _run(parent, n, "batch", label_exchange, composition, include_incomplete, None):
             labs = np.ascontiguousarray(labs, dtype=dt)
             labs.flags.writeable = False
+            if degeneracy:
+                degs = np.ascontiguousarray(degs, dtype=np.int64)
+                degs.flags.writeable = False
             for H in Hs:
-                yield H, labs
+                yield (H, labs, degs) if degeneracy else (H, labs)
 
 
 def count_structures(parent: Parent, sizes, composition=None, label_exchange=False,
                      include_incomplete=False, stats=None):
     """Number of derivative structures for each size, without listing them.
 
-    Returns a dict {n: count}.
+    Returns a dict {n: count}. If a dict is passed as ``stats``, ``stats["weight"]`` receives the sum
+    of the total degeneracies, i.e. the number of (superlattice, labeling) pairs counted, and
+    ``stats["nodes"]`` the number of search nodes.
     """
     out = {}
     for n in _sizes(sizes):

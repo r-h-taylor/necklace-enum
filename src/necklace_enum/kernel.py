@@ -16,8 +16,10 @@ from numba import njit
 
 
 @njit(cache=True)
-def _rot_test(r, word, lab, m, a, k, Rp, SW, img, vsym, ISP, CM, LT):
-    """True if some spelling of e.pi.rot(r.w) is smaller than w."""
+def _rot_count(r, word, lab, m, a, k, Rp, SW, img, vsym, ISP, CM, LT):
+    """-1 if some spelling of e.pi.rot(r.w) is smaller than w; otherwise the number of
+    spellings (letterwise map, start position) equal to w, i.e. the elements of the coset
+    of r that fix the structure."""
     n = m * a
     if ISP[r]:
         # product form: column p -> CM[r, p], letter map LT[r]
@@ -33,26 +35,32 @@ def _rot_test(r, word, lab, m, a, k, Rp, SW, img, vsym, ISP, CM, LT):
             vsym[p] = s
     w0 = word[0]
     nsw = SW.shape[0]
+    neq = 0
     for i in range(-1, nsw):              # -1 = identity map
         for p in range(m):
             x = vsym[p] if i < 0 else SW[i, vsym[p]]
             if x < w0:
-                return True
+                return -1
             if x == w0:
+                eq = True
                 for d in range(1, m):
                     y = vsym[(p + d) % m]
                     if i >= 0:
                         y = SW[i, y]
                     if y != word[d]:
                         if y < word[d]:
-                            return True
+                            return -1
+                        eq = False
                         break
-    return False
+                if eq:
+                    neq += 1
+    return neq
 
 
 @njit(cache=True)
 def torus_kernel(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
-                 store, out_words, out_cls, allowed, MU, ISP, CM, LT):
+                 store, out_words, out_cls, allowed, MU, ISP, CM, LT, gsz, degsum, want_deg, out_fix,
+                 cls_ptr, cls_ops):
     # MU: letter maps mu = pi o nu for the reversal-type operation (inversion),
     # shape (nmu, q); nmu = 0 disables reversal pruning.
     q = symcnt.shape[0]
@@ -76,6 +84,7 @@ def torus_kernel(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
     img = np.empty(n, dtype=np.int64)
     vsym = np.empty(m, dtype=np.int64)
     alive = np.zeros(nc, dtype=np.bool_)
+    erow = np.zeros(max(nr, 1), dtype=np.int64)
     nstore = 0
     nodes = 0
     t = 1
@@ -84,6 +93,7 @@ def torus_kernel(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
         if t > m:
             if P[t] == m:                                  # Lyndon under C_m
                 ok = True
+                fix = 1
                 for s_ in range(NA[m]):                    # finish wrapped tails
                     code = ACT[m, s_]
                     i = code // m
@@ -98,20 +108,26 @@ def torus_kernel(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
                     if res < 0 or (res == 0 and swtrans[i]):
                         ok = False
                         break
+                    if res == 0:
+                        fix += 1
                 if ok:
                     for s_ in range(NP[m]):
                         code = PEND[s_]
                         mu = code // (m + 1)
                         j = code % (m + 1)
+                        eqr = True
                         for ii in range(j + 1, m + 1):
                             x = MU[mu, A[m - (ii - j - 1)]]
                             y = A[ii]
                             if x != y:
+                                eqr = False
                                 if x < y:
                                     ok = False
                                 break
                         if not ok:
                             break
+                        if eqr:
+                            fix += 1
                 if ok:
                     for p in range(m):
                         word[p] = A[p + 1]
@@ -130,7 +146,10 @@ def torus_kernel(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
                                 break
                         if not need:
                             continue
-                        if _rot_test(r, word, lab, m, a, k, Rp, SW, img, vsym, ISP, CM, LT):
+                        e = _rot_count(r, word, lab, m, a, k, Rp, SW, img, vsym, ISP, CM, LT)
+                        if e >= 0:
+                            erow[r] = e
+                        else:
                             for cl in range(nc):
                                 if cls_mask[cl, r] and alive[cl]:
                                     alive[cl] = False
@@ -140,10 +159,17 @@ def torus_kernel(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
                     for cl in range(nc):
                         if alive[cl]:
                             counts[cl] += 1
+                            if want_deg or store:
+                                f = fix
+                                for jj in range(cls_ptr[cl], cls_ptr[cl + 1]):
+                                    f += erow[cls_ops[jj]]
+                                if want_deg:
+                                    degsum[cl] += gsz[cl] // f
                             if store and nstore < out_words.shape[0]:
                                 for p in range(m):
                                     out_words[nstore, p] = word[p]
                                 out_cls[nstore] = cl
+                                out_fix[nstore] = f
                                 nstore += 1
             t -= 1
             continue
@@ -230,8 +256,8 @@ def torus_kernel(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
 
 @njit(cache=True)
 def torus_kernel_resume(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
-                        out_words, out_cls, allowed, MU, ISP, CM, LT,
-                        rem, A, P, S, ACT, NA, PEND, NP, ST):
+                        out_words, out_cls, allowed, MU, ISP, CM, LT, out_fix,
+                        cls_ptr, cls_ops, rem, A, P, S, ACT, NA, PEND, NP, ST):
     """torus_kernel in listing mode, resumable: stops when out_words is full and continues
     from the same point on the next call. The search state lives in the arrays rem, A, P, S, ACT,
     NA, PEND, NP and ST = (depth, nodes, phase); phase 0 = not started, 1 = paused, 2 = done.
@@ -252,6 +278,7 @@ def torus_kernel_resume(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
     img = np.empty(n, dtype=np.int64)
     vsym = np.empty(m, dtype=np.int64)
     alive = np.zeros(nc, dtype=np.bool_)
+    erow = np.zeros(max(nr, 1), dtype=np.int64)
     if ST[2] == 2:
         return 0, ST[1], True
     if ST[2] == 0:
@@ -278,6 +305,7 @@ def torus_kernel_resume(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
                 return nstore, nodes, False
             if P[t] == m:                                  # Lyndon under C_m
                 ok = True
+                fix = 1
                 for s_ in range(NA[m]):                    # finish wrapped tails
                     code = ACT[m, s_]
                     i = code // m
@@ -292,20 +320,26 @@ def torus_kernel_resume(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
                     if res < 0 or (res == 0 and swtrans[i]):
                         ok = False
                         break
+                    if res == 0:
+                        fix += 1
                 if ok:
                     for s_ in range(NP[m]):
                         code = PEND[s_]
                         mu = code // (m + 1)
                         j = code % (m + 1)
+                        eqr = True
                         for ii in range(j + 1, m + 1):
                             x = MU[mu, A[m - (ii - j - 1)]]
                             y = A[ii]
                             if x != y:
+                                eqr = False
                                 if x < y:
                                     ok = False
                                 break
                         if not ok:
                             break
+                        if eqr:
+                            fix += 1
                 if ok:
                     for p in range(m):
                         word[p] = A[p + 1]
@@ -324,7 +358,10 @@ def torus_kernel_resume(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
                                 break
                         if not need:
                             continue
-                        if _rot_test(r, word, lab, m, a, k, Rp, SW, img, vsym, ISP, CM, LT):
+                        e = _rot_count(r, word, lab, m, a, k, Rp, SW, img, vsym, ISP, CM, LT)
+                        if e >= 0:
+                            erow[r] = e
+                        else:
                             for cl in range(nc):
                                 if cls_mask[cl, r] and alive[cl]:
                                     alive[cl] = False
@@ -334,11 +371,14 @@ def torus_kernel_resume(m, a, k, c, symcnt, SW, swtrans, Rp, cls_mask, counts,
                     for cl in range(nc):
                         if alive[cl]:
                             counts[cl] += 1
-                            if True:
-                                for p in range(m):
-                                    out_words[nstore, p] = word[p]
-                                out_cls[nstore] = cl
-                                nstore += 1
+                            f = fix
+                            for jj in range(cls_ptr[cl], cls_ptr[cl + 1]):
+                                f += erow[cls_ops[jj]]
+                            for p in range(m):
+                                out_words[nstore, p] = word[p]
+                            out_cls[nstore] = cl
+                            out_fix[nstore] = f
+                            nstore += 1
             t -= 1
             continue
         nodes += 1
