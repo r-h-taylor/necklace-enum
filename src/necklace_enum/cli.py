@@ -97,7 +97,12 @@ def main(argv=None):
                 row += [s.degeneracy, s.superlattice_degeneracy, s.total_degeneracy]
             print(*row)
         return 0
-    from ase.io import write
+    try:
+        from ase.io import write
+    except ImportError:
+        print(f"necklace-enum: --format {args.format} writes structures with ASE, which is not installed.\n"
+              "Install it with:  pip install ase", file=sys.stderr)
+        return 1
     write(args.output or sys.stdout, [s.to_ase() for s in structs], format=args.format)
     return 0
 

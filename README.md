@@ -171,6 +171,10 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
 
 ## Changes
 
+- **0.3.1** (24 Nov 2026): a clear message instead of a traceback when an ASE output format is requested without
+  ASE installed. Adds the data behind the paper's corrected Table 2 and Fig. 3: Enumlib.jl 0.5.0 memory
+  (`scripts/memory_enumlibjl050_M2.txt`), the binary-fcc size sweep for n = 10-28 (`scripts/sweep_binary_fcc*_M2.txt`)
+  and the figure script (`scripts/make_fig_sweep.py`).
 - **0.3.0** (24 Nov 2026): degeneracies computed inside the generator, in every mode including fixed composition:
   `Structure.degeneracy`, `.superlattice_degeneracy`, `.total_degeneracy`; `enumerate_labelings(..., degeneracy=True)`;
   `superlattice_degeneracy()`; `count_structures(..., stats=...)` reports the total weight; `--degeneracy` on the
