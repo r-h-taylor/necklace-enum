@@ -1,0 +1,15 @@
+# Enumlib.jl 0.5.0 Julia 1.13.4, JULIA_PROJECT=/Users/richardtaylor/enumlibjl-v050
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1; peak resident memory in GB (wall time)
+problem                                        Enumlib.jl
+baseline (tiny cell)                         0.296 (    1s)
+fcc binary, all compositions, n=16           0.323 (    1s)
+fcc binary, all compositions, n=20           0.569 (    7s)
+fcc binary, all compositions, n=24           6.506 (  174s)
+fcc ternary, all compositions, n=12          0.395 (    1s)
+fcc ternary, all compositions, n=14          1.145 (    3s)
+fcc quaternary, all compositions, n=10       0.436 (    1s)
+fcc 15:5, n=20                               0.398 (    2s)
+fcc 24:8, n=32                              17.110 ( 1471s)
+fcc 10:5:5, n=20                                  timeout
+hcp binary, all compositions, 24 sites       5.381 (   91s)
+hcp ternary, all compositions, 16 sites      8.982 (   22s)

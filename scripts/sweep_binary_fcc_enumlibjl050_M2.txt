@@ -1,0 +1,11 @@
+# Enumlib.jl 0.5.0 Julia 1.13.4, JULIA_PROJECT=/Users/richardtaylor/enumlibjl-v050
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, cooldown 60 s, timeout 3600 s
+code         n   structures     time_s  peak_GB  status
+enumlibjl   10        1,211      0.002    0.296  ok
+enumlibjl   12        7,140      0.016    0.297  ok
+enumlibjl   14       18,270      0.033    0.297  ok
+enumlibjl   16       95,837      0.283    0.323  ok
+enumlibjl   18      417,268      1.096    0.355  ok
+enumlibjl   20    1,715,551      5.707    0.567  ok
+enumlibjl   22    5,226,228     15.578    1.223  ok
+enumlibjl   24   38,517,429    171.311    5.719  ok
