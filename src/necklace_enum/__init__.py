@@ -8,7 +8,7 @@ from .core import (Structure, count_structures, enumerate_labelings, enumerate_s
 from .enumlib_format import read_struct_enum, read_struct_enum_in, run_enumlib_input, write_struct_enum
 from .parent import Parent, bcc, fcc, hcp, sc
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 __all__ = ["Parent", "Structure", "bcc", "count_structures", "count_structures_burnside", "enumerate_labelings", "enumerate_structures", "fcc", "hcp",
            "read_struct_enum", "read_struct_enum_in", "run_enumlib_input", "sc", "superlattice_degeneracy",
            "write_struct_enum"]

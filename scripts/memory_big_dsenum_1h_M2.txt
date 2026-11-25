@@ -1,0 +1,7 @@
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1; peak resident memory in GB (wall time)
+problem                                      dsenum count
+baseline (tiny cell)                         0.167 (    2s)
+fcc binary, all compositions, n=28           0.232 (  333s)
+fcc binary, all compositions, n=32           0.689 ( 3105s)
+fcc 44:4, n=48                               0.182 (  582s)
+fcc 42:6, n=48                                    timeout

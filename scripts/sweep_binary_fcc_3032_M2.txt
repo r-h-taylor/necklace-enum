@@ -1,0 +1,4 @@
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, cooldown 60 s, timeout 3600 s
+code         n   structures     time_s  peak_GB  status
+necklace    30 2,621,617,654     20.010    0.167  ok
+necklace    32 9,181,330,073    742.233    0.146  ok

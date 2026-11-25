@@ -1,7 +1,8 @@
 """Fig. 3: listing time and peak memory against cell size, binary fcc, all compositions.
 
     python3 scripts/make_fig_sweep.py scripts/sweep_binary_fcc_M2.txt \
-        scripts/sweep_binary_fcc_enumlibjl050_M2.txt scripts/sweep_binary_fcc_2628_M2.txt -o fig_sweep.pdf
+        scripts/sweep_binary_fcc_enumlibjl050_M2.txt scripts/sweep_binary_fcc_2628_M2.txt \
+        scripts/sweep_binary_fcc_3032_M2.txt -o fig_sweep.pdf
 
 Rows from the first log whose code is enumlibjl are skipped: that run used Enumlib.jl 0.4.2.
 """
@@ -11,7 +12,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 ap = argparse.ArgumentParser()
-ap.add_argument("main"); ap.add_argument("jl"); ap.add_argument("big")
+ap.add_argument("main"); ap.add_argument("more", nargs="+", help="further sweep logs, merged in order")
 ap.add_argument("-o", default="fig_sweep.pdf")
 a = ap.parse_args()
 
@@ -27,7 +28,7 @@ def read(path, skip=()):
     return d
 
 D = read(a.main, skip=("enumlibjl",))
-for src in (read(a.jl), read(a.big)):
+for src in (read(f) for f in a.more):
     for code, pts in src.items():
         D.setdefault(code, {}).update(pts)
 
@@ -52,7 +53,7 @@ for ax, lab, yl in ((ax1, "(a)", "Listing time (s)"), (ax2, "(b)", "Peak memory 
     ax.set_yscale("log")
     ax.set_xlabel("Sites per cell, $n$")
     ax.set_ylabel(yl)
-    ax.set_xticks(range(10, 29, 2))
+    ax.set_xticks(range(10, max(max(v) for v in D.values()) + 1, 2))
     ax.grid(True, which="major", color="#e8e8e8", lw=0.5, zorder=0)
     for sp in ("top", "right"):
         ax.spines[sp].set_visible(False)

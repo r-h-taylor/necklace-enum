@@ -171,6 +171,12 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
 
 ## Changes
 
+- **0.3.2** (25 Nov 2026): dsenum and Enumlib.jl 0.5.0 memory on the larger problems of the paper's Table 2
+  (`scripts/memory_big_dsenum_enumlibjl050_M2.txt`, and dsenum with a one-hour limit in
+  `scripts/memory_big_dsenum_1h_M2.txt`); the present method listing binary fcc at n = 30 and 32
+  (`scripts/sweep_binary_fcc_3032_M2.txt`, run by `scripts/run_large_binary.sh`); Fig. 3 extended to n = 32;
+  `memory_compare.py --only-big`, and runs that fail for lack of memory are reported as such. The draft paper PDF
+  is withdrawn from the repository until the preprint is posted.
 - **0.3.1** (24 Nov 2026): a clear message instead of a traceback when an ASE output format is requested without
   ASE installed. Adds the data behind the paper's corrected Table 2 and Fig. 3: Enumlib.jl 0.5.0 memory
   (`scripts/memory_enumlibjl050_M2.txt`), the binary-fcc size sweep for n = 10-28 (`scripts/sweep_binary_fcc*_M2.txt`)

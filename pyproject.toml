@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "necklace-enum"
-version = "0.3.1"
+version = "0.3.2"
 description = "Derivative superstructures generated as Lyndon words on the quotient group of a superlattice"
 readme = "README.md"
 license = "MIT"
@@ -29,7 +29,6 @@ classifiers = [
 [project.urls]
 Homepage = "https://r-h-taylor.github.io/necklace-enum/"
 Repository = "https://github.com/r-h-taylor/necklace-enum"
-Paper = "https://r-h-taylor.github.io/necklace-enum/necklace-enum.pdf"
 Archive = "https://doi.org/10.5281/zenodo.24330095"
 
 [project.optional-dependencies]

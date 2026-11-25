@@ -111,7 +111,9 @@ class _HNFInfo:
     def labdegn(self, labs, LG):
         """Orbit sizes of a batch of labelings (rows of labs) under this superlattice's
         translations and fixing operations, and the label permutations LG:
-        |group| / |stabilizer|."""
+        |group| / |stabilizer|, found by applying every site permutation of the group.
+        The writer takes its degeneracies from the generator; this independent
+        calculation is what tests/test_degeneracy.py compares them with."""
         stab = np.zeros(len(labs), dtype=np.int64)
         for e in LG:
             el = e[labs]

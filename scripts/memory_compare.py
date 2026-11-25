@@ -4,6 +4,10 @@ problems of the paper's Table 1, each code in its own process, measured with /us
     python3 scripts/memory_compare.py --enumx ~/Projects/enumlib/src/enum.x
     python3 scripts/memory_compare.py --enumx ~/Projects/enumlib/src/enum.x --big     # adds n=32 and 48-site rows
     python3 scripts/memory_compare.py --codes necklace,dsenum                         # a subset of codes
+    python3 scripts/memory_compare.py --codes dsenum,enumlibjl --only-big --timeout 3600
+
+A run that ends in an allocation error, or is killed by the operating system, is reported as OOM,
+with its peak memory when /usr/bin/time could still record it; a run stopped at --timeout as timeout.
 
 For each code a baseline run on a tiny cell is reported first (interpreter, libraries and
 compiled code); "growth" in the analysis is peak minus that baseline. necklace-enum is measured
@@ -75,7 +79,19 @@ def timed(cmd, cwd=None, timeout=1800):
     w = re.search(r"([\d.]+) real", p.stderr) or re.search(r"Elapsed \(wall clock\) time.*: ([\d:.]+)", p.stderr)
     mem = int(m.group(1)) / (1e9 if darwin else 1e6) if m else None
     wall = float(w.group(1)) if (w and ":" not in w.group(1)) else None
-    status = "ok" if p.returncode == 0 else f"exit {p.returncode}: {p.stderr.strip().splitlines()[-1][:60] if p.stderr.strip() else ''}"
+    out = p.stdout + p.stderr
+    failed = p.returncode != 0 or re.search(r"^(ERROR|REFUSED)", p.stdout, re.M)
+    # out of memory: an allocation error from the program itself, or a kill by the operating
+    # system (SIGKILL that is not ours: our own time limit is reported as "timeout" above)
+    oom = re.search(r"OutOfMemory|MemoryError|out of memory|Cannot allocate memory|bad_alloc", out, re.I) \
+        or p.returncode in (-9, 137) or re.search(r"signal 9", p.stderr)
+    if not failed:
+        status = "ok"
+    elif oom:
+        status = "out of memory"
+    else:
+        last = (p.stdout.strip() or p.stderr.strip()).splitlines()
+        status = f"exit {p.returncode}: {last[-1][:60] if last else ''}"
     return mem, wall, status, p.stdout
 
 
@@ -127,6 +143,8 @@ def enumlib_run(enumx, parent, n, k, comp, timeout):
 
 def fmt(r):
     mem, wall, status, _ = r
+    if status == "out of memory":
+        return f"{'OOM' if mem is None else f'OOM {mem:.1f}':>14s}"   # peak before the failure, if known
     if status != "ok":
         return f"{status[:13]:>14s}"
     return f"{mem:7.3f} ({wall:5.0f}s)" if wall is not None else f"{mem:7.3f}       "
@@ -138,10 +156,11 @@ def main():
     ap.add_argument("--julia", default="julia")
     ap.add_argument("--codes", default="necklace,dsenum,enumlibjl,enumlib")
     ap.add_argument("--big", action="store_true")
+    ap.add_argument("--only-big", action="store_true", help="only the baseline and the larger problems")
     ap.add_argument("--timeout", type=float, default=1800)
     a = ap.parse_args()
     codes = a.codes.split(",")
-    rows = [BASE] + ROWS + (BIG if a.big else [])
+    rows = [BASE] + BIG if a.only_big else [BASE] + ROWS + (BIG if a.big else [])
     cols = []
     if "necklace" in codes: cols += ["necklace count", "necklace list"]
     if "dsenum" in codes: cols += ["dsenum count"]
