@@ -87,6 +87,7 @@ def main(argv=None):
         print(f"wrote {args.output or 'struct_enum.out'}: {n:,d} structures")
         return 0
     structs = enumerate_structures(P, sizes, composition=comp, label_exchange=args.label_exchange,
+                                   degeneracy=args.degeneracy or args.format != "summary",
                                    include_incomplete=args.include_incomplete)
     if args.format == "summary":
         if args.degeneracy:

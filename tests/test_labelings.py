@@ -48,3 +48,15 @@ def test_rebuild_structure():
     H, labs = next(iter(te.enumerate_labelings(P, 4)))
     s = te.Structure(P, H, tuple(int(x) for x in labs[0]))
     assert len(s.sites()[0]) == 4
+
+
+def test_copy_gives_every_superlattice_its_own_rows():
+    """copy=True: the same structures, but each superlattice gets a separate, writable array."""
+    P = te.fcc(2)
+    shared = [(H.tobytes(), lab) for H, lab in te.enumerate_labelings(P, 8)]
+    copied = [(H.tobytes(), lab) for H, lab in te.enumerate_labelings(P, 8, copy=True)]
+    assert [h for h, _ in shared] == [h for h, _ in copied]
+    assert all((a == b).all() for (_, a), (_, b) in zip(shared, copied))
+    assert len({id(lab) for _, lab in copied}) == len(copied)          # no array is shared
+    assert all(lab.flags.writeable for _, lab in copied)
+    assert len({id(lab) for _, lab in shared}) < len(shared)           # the default does share

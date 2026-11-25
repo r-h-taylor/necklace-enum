@@ -2,8 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24330095.svg)](https://doi.org/10.5281/zenodo.24330095)
 
-Enumerates derivative superstructures — the symmetrically distinct ways of decorating a parent lattice with
-several kinds of atoms — by generating them directly as canonical words, without filtering duplicates.
+Enumerates derivative superstructures — the symmetrically distinct ways of decorating a parent lattice with several kinds of atoms — by generating them directly as canonical words, without storing labelings or comparing against the structures already found.
 
 Project page: https://r-h-taylor.github.io/necklace-enum/ · Archived at Zenodo: https://doi.org/10.5281/zenodo.24330095
 
@@ -68,9 +67,11 @@ composition as well as over all compositions: `s.degeneracy` is the number of la
 equivalent to it (enumlib's `labdegn`), `s.superlattice_degeneracy` the number of equivalent superlattices of the same
 size (`Hdegn`), and `s.total_degeneracy` their product (`Totdegn`), the weight g in a partition function
 sum g exp(-E/kT). Summed over all structures of one size, the total degeneracies count every labeling of every
-superlattice exactly once. They come out of the generator itself: while testing a word for canonicity it compares
+superlattice exactly once. While testing a word for canonicity it compares
 the word with its images under the symmetry operations, and the comparisons that end equal are its stabilizer, so
-degeneracy = group order / stabilizer order at no extra pass and no measurable cost.
+degeneracy = group order / stabilizer order at no extra pass. They are computed only when requested:
+`enumerate_structures` fills them in by default, `enumerate_labelings` with `degeneracy=True`, and skipping them
+(`degeneracy=False`) makes object listing about a quarter faster.
 
 ```python
 for s in te.enumerate_structures(P, 8, composition=(6, 2)):
@@ -142,7 +143,6 @@ python check_necklace_enum.py           # stand-alone check incl. timing against
 python check_necklace_enum.py --full    # more cases and larger cells (a few minutes)
 pytest                   # brute force, published counts, export checks (about 15 s)
 pytest --slow            # also binary fcc up to n = 23
-python scripts/reproduce_paper.py [--full]
 ```
 
 The tests compare the generated structures, one by one, with an independent brute-force code for fcc, bcc,
@@ -159,7 +159,7 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
 - Memory does not grow with the number of structures. The generator's state is polynomial in the cell size, and
   listing streams structures from the compiled kernel in batches of 2^16 words. Counting stays within 10 MB of the
   85 MB interpreter baseline up to 9.2 billion structures; listing stays below 0.22 GB
-  (`scripts/memory_compare.py`).
+  (logs in `scripts/*_M2.txt`).
 - `enumerate_structures` builds a Python object per structure, so listing that way is far slower than counting.
   `enumerate_labelings` hands over arrays instead and is several times faster; use it, counts or fixed compositions
   for very large runs.
@@ -169,31 +169,6 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
   in which case a `MemoryError` names the offending Smith normal form.
 - The first call compiles the kernels with Numba (a few seconds); later calls use the on-disk cache.
 
-## Changes
-
-- **0.3.2** (25 Nov 2026): dsenum and Enumlib.jl 0.5.0 memory on the larger problems of the paper's Table 2
-  (`scripts/memory_big_dsenum_enumlibjl050_M2.txt`, and dsenum with a one-hour limit in
-  `scripts/memory_big_dsenum_1h_M2.txt`); the present method listing binary fcc at n = 30 and 32
-  (`scripts/sweep_binary_fcc_3032_M2.txt`, run by `scripts/run_large_binary.sh`); Fig. 3 extended to n = 32;
-  `memory_compare.py --only-big`, and runs that fail for lack of memory are reported as such. The draft paper PDF
-  is withdrawn from the repository until the preprint is posted.
-- **0.3.1** (24 Nov 2026): a clear message instead of a traceback when an ASE output format is requested without
-  ASE installed. Adds the data behind the paper's corrected Table 2 and Fig. 3: Enumlib.jl 0.5.0 memory
-  (`scripts/memory_enumlibjl050_M2.txt`), the binary-fcc size sweep for n = 10-28 (`scripts/sweep_binary_fcc*_M2.txt`)
-  and the figure script (`scripts/make_fig_sweep.py`).
-- **0.3.0** (24 Nov 2026): degeneracies computed inside the generator, in every mode including fixed composition:
-  `Structure.degeneracy`, `.superlattice_degeneracy`, `.total_degeneracy`; `enumerate_labelings(..., degeneracy=True)`;
-  `superlattice_degeneracy()`; `count_structures(..., stats=...)` reports the total weight; `--degeneracy` on the
-  command line; degeneracies in `to_ase()` info; the enumlib-format writer uses them (no separate pass).
-  `examples/necklace-try.sh`, a short command-line tour; `scripts/sweep_binary_fcc.py`; benchmark logs now record
-  the Enumlib.jl version.
-- **0.2.1** (22 Nov 2026): `enumerate_labelings`, fast listing as arrays of labelings; `--cooldown` option in the
-  benchmark scripts; `scripts/time_necklace.py`; PyPI release.
-- **0.2.0** (21 Nov 2026): streaming listing with constant memory (resumable kernel); Burnside counter
-  (`burnside.py`); benchmark and comparison scripts against enumlib, Enumlib.jl and dsenum; structure-by-structure
-  check against enumlib (`scripts/compare_structures_with_enumlib.py`); binary fcc counts to 43 sites
-  (`scripts/oeis_counts.py`); current paper in `docs/`.
-- **0.1.0** (18 Nov 2026): first release.
 
 ## License and citation
 

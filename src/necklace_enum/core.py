@@ -15,9 +15,9 @@ LIST_BATCH = 1 << 16          # words per batch when listing; memory stays fixed
 
 
 # ---------------------------------------------------------------- results
-@dataclass(frozen=True)
+@dataclass(slots=True)
 class Structure:
-    """One derivative structure.
+    """One derivative structure (treat as read-only).
 
     ``hnf`` is the superlattice in Hermite normal form (columns are supercell
     vectors in lattice coordinates), and ``labels[i * n + g]`` is the species
@@ -161,7 +161,7 @@ def _composition_vector(P: Parent, composition, N):
 
 
 # ---------------------------------------------------------------- driver
-def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, stats):
+def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, stats, want_deg=False):
     """Enumerate one index n. store=True yields (hnf, labels) per structure; store="batch"
     yields (list of hnfs, labels array) per group of superlattices sharing the same words;
     store=False returns the count."""
@@ -219,7 +219,7 @@ def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, s
         cls_ptr = np.zeros(len(keys) + 1, dtype=np.int64)            # operations of each class, CSR
         cls_ptr[1:] = np.cumsum(mask.sum(axis=1))
         cls_ops = np.nonzero(mask)[1].astype(np.int64)
-        want = store or (stats is not None)                         # degeneracies only when asked for
+        want = want_deg or (stats is not None)                      # degeneracies only when asked for
         hdeg = ({ci: [superlattice_degeneracy(P, q.H) for q in classes[key]] for ci, key in enumerate(keys)}
                 if want else None)
         q_alpha = k ** A_
@@ -287,18 +287,25 @@ def _run(P: Parent, n, store, label_exchange, composition, include_incomplete, s
                     flat = ((ow[:ns, :, None] // powers) % k).reshape(ns, m * A_)
                     labs = flat[:, phi]                                # (ns, N), site order
                     cls = oc[:ns].copy()
-                    degs = gsz[cls] // od[:ns] * scale                 # orbit = group order / stabilizer
                     if stats is not None:
                         np.add.at(degsum, cls, gsz[cls] // od[:ns])
+                    if want_deg:
+                        degs = gsz[cls] // od[:ns] * scale             # orbit = group order / stabilizer
                     if store == "batch":
                         for ci in np.unique(cls):
                             sel = cls == ci
-                            yield [q.H for q in classes[keys[ci]]], labs[sel], degs[sel], hdeg[ci]
-                    else:
+                            yield ([q.H for q in classes[keys[ci]]], labs[sel],
+                                   degs[sel] if want_deg else None, hdeg[ci] if want_deg else None)
+                    elif want_deg:
                         for lab_row, ci, g in zip(labs, cls, degs.tolist()):
                             lab = tuple(int(x) for x in lab_row)
                             for q, h in zip(classes[keys[ci]], hdeg[ci]):
                                 yield q.H, lab, g, h
+                    else:
+                        for lab_row, ci in zip(labs, cls):
+                            lab = tuple(int(x) for x in lab_row)
+                            for q in classes[keys[ci]]:
+                                yield q.H, lab, None, None
             if stats is not None:
                 stats["nodes"] = stats.get("nodes", 0) + int(nodes)
             for ci, key in enumerate(keys):
@@ -321,7 +328,7 @@ def _sizes(sizes):
 
 
 def enumerate_structures(parent: Parent, sizes, composition=None, label_exchange=False,
-                         include_incomplete=False):
+                         include_incomplete=False, degeneracy=True):
     """Yield every symmetrically distinct derivative structure.
 
     Parameters
@@ -337,22 +344,31 @@ def enumerate_structures(parent: Parent, sizes, composition=None, label_exchange
         (the convention of Hart & Forcade's tables). Default False.
     include_incomplete : bool
         Also list structures in which some species is absent.
+    degeneracy : bool
+        Fill in each structure's degeneracies (default). False skips them (they are then None),
+        which makes listing about a quarter faster.
     """
     for n in _sizes(sizes):
         yield from (Structure(parent, H, lab, g, h) for H, lab, g, h in
-                    _run(parent, n, True, label_exchange, composition, include_incomplete, None))
+                    _run(parent, n, True, label_exchange, composition, include_incomplete, None,
+                         want_deg=degeneracy))
 
 
 def enumerate_labelings(parent: Parent, sizes, composition=None, label_exchange=False,
-                        include_incomplete=False, degeneracy=False):
+                        include_incomplete=False, degeneracy=False, copy=False):
     """Fast listing: yield the structures as arrays of labelings, without a Python object per structure.
 
     Yields ``(hnf, labels)`` pairs. ``hnf`` is a superlattice in Hermite normal form and
     ``labels`` is an integer array of shape ``(r, n * d)``: each row is one derivative
     structure on that superlattice, in the site order of :class:`Structure` (``labels[j, i * n + g]``
     is the species index on basis site i at quotient-group element g). Rows come in batches of
-    at most ``LIST_BATCH`` words, so memory stays fixed. The same array may be yielded for
-    several superlattices that share a Smith normal form and symmetry; treat it as read-only.
+    at most ``LIST_BATCH`` words, so memory stays fixed.
+
+    The generator finds each canonical word once for a whole class of superlattices (those with
+    the same Smith normal form and the same point operations), so by default the same read-only
+    array is yielded for every superlattice of the class: each (hnf, row) pair is a distinct
+    structure, but its labeling is stored once per class. With ``copy=True`` every superlattice
+    gets its own writable copy of the rows, so every structure is written out separately.
 
     ``Structure(parent, hnf, tuple(row))`` rebuilds the object that :func:`enumerate_structures`
     would give. Parameters are as for :func:`enumerate_structures`.
@@ -364,14 +380,19 @@ def enumerate_labelings(parent: Parent, sizes, composition=None, label_exchange=
     """
     dt = np.int8 if parent.k <= 127 else np.int64
     for n in _sizes(sizes):
-        for Hs, labs, degs, _ in _run(parent, n, "batch", label_exchange, composition, include_incomplete, None):
+        for Hs, labs, degs, _ in _run(parent, n, "batch", label_exchange, composition, include_incomplete, None,
+                                      want_deg=degeneracy):
             labs = np.ascontiguousarray(labs, dtype=dt)
             labs.flags.writeable = False
             if degeneracy:
                 degs = np.ascontiguousarray(degs, dtype=np.int64)
                 degs.flags.writeable = False
             for H in Hs:
-                yield (H, labs, degs) if degeneracy else (H, labs)
+                L = labs.copy() if copy else labs
+                if degeneracy:
+                    yield H, L, (degs.copy() if copy else degs)
+                else:
+                    yield H, L
 
 
 def count_structures(parent: Parent, sizes, composition=None, label_exchange=False,

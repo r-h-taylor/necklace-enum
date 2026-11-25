@@ -1,0 +1,13 @@
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, necklace-enum 0.2.1, cooldown 60 s
+problem                                      structures    count   arrays  objects
+fcc binary, all compositions, n=16               95,837     0.10     0.12     0.18
+fcc binary, all compositions, n=20            1,715,551     0.14     0.17     0.88
+fcc binary, all compositions, n=24           38,517,429     0.92     1.63    18.18
+fcc ternary, all compositions, n=12             713,147     0.10     0.14     0.45
+fcc ternary, all compositions, n=14           4,670,898     0.11     0.18     1.95
+fcc quaternary, all compositions, n=10          723,876     0.07     0.11     0.39
+fcc 15:5, n=20                                   26,199     0.11     0.11     0.12
+fcc 24:8, n=32                               22,697,848     1.35     2.22    15.13
+fcc 10:5:5, n=20                             73,095,238     1.17     2.35    32.95
+hcp binary, all compositions, 24 sites       33,718,390     3.01     6.92    38.39
+hcp ternary, all compositions, 16 sites      49,700,010     5.60    11.42    67.84

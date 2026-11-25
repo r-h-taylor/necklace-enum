@@ -189,7 +189,8 @@ def write_struct_enum(file, parent: Parent, sizes, composition=None, include_inc
             info = {}
             size_count = 0
             for comp in runs:
-                for Hs, labs, degs, _ in _run(parent, n, "batch", label_exchange, comp, include_incomplete, None):
+                for Hs, labs, degs, _ in _run(parent, n, "batch", label_exchange, comp, include_incomplete, None,
+                                              want_deg=True):
                     strings = (labs.astype(np.uint8) + 48).view(f"S{labs.shape[1]}").ravel()
                     for H in Hs:
                         key = tuple(np.asarray(H).ravel())
