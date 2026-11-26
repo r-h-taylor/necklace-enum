@@ -174,14 +174,14 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
 
 MIT. If you use this code, please cite:
 
-1. R. H. Taylor, *Algorithm for low-memory derivative structure enumeration using toroidal necklaces* (2026).
+1. R. H. Taylor et al., *Algorithm for low-memory derivative structure enumeration using toroidal necklaces* (2026).
    Software: necklace-enum, Zenodo, [doi:10.5281/zenodo.24330095](https://doi.org/10.5281/zenodo.24330095).
 2. G. L. W. Hart and R. W. Forcade, *Algorithm for generating derivative structures*,
    Phys. Rev. B **77**, 224115 (2008), [doi:10.1103/PhysRevB.77.224115](https://doi.org/10.1103/PhysRevB.77.224115).
 
 ```bibtex
 @article{Taylor2026necklace,
-  author = {Taylor, Richard H.},
+  author = {Taylor, Richard H. and Curtarolo, Stefano},
   title  = {Algorithm for low-memory derivative structure enumeration using toroidal necklaces},
   year   = {2026},
   note   = {Software: necklace-enum, doi:10.5281/zenodo.24330095}

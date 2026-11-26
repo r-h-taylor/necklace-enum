@@ -42,7 +42,7 @@ permutation applied to every letter, so the distinct structures are Lyndon words
 necklace algorithm. Nothing about earlier structures is stored, so memory does not grow with the number of
 structures: counting 9.2 billion structures stays within 10&nbsp;MB of the interpreter's baseline, and listing
 stays below 0.22&nbsp;GB on problems where enumlib needs gigabytes or runs out of memory. The package reproduces
-all published counts and lists structures ~2&ndash;90&times; faster than the fastest of enumlib, Enumlib.jl and
+all published counts and lists structures ~2&ndash;80&times; faster than the fastest of enumlib, Enumlib.jl and
 dsenum on each benchmark problem, for cells larger than 14 sites. Each structure comes with its degeneracy, its weight in a partition function, at
 fixed composition as well, taken from the generator's own symmetry comparisons.</p>
 
@@ -67,7 +67,7 @@ for s in te.enumerate_structures(P, 8, composition={"Cu": 6, "Au": 2}):
     for any lattice and basis, with optional site restrictions. Exporting to ASE needs <code>pip install ase</code>.
     The README describes all options and the <code>necklace-enum</code> command-line tool.</p>
   </li>
-  <li>Paper: R. H. Taylor, <em>Algorithm for low-memory derivative structure enumeration using toroidal necklaces</em> (2026), preprint forthcoming</li>
+  <li>Paper: R. H. Taylor et al., <em>Algorithm for low-memory derivative structure enumeration using toroidal necklaces</em> (2026), preprint forthcoming</li>
   <li><a href="/">Richard H. Taylor</a></li>
 </ul>
 
