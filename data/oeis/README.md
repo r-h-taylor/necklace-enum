@@ -35,7 +35,7 @@ the database. Draft entries follow in OEIS internal format; replace `A??????` by
 %o (Python) # pip install git+https://github.com/r-h-taylor/necklace-enum
 %o import necklace_enum as te
 %o def a(n): return te.count_structures_burnside(te.fcc(2), n, label_exchange=True)[n]
-%Y Cf. A001001, A159842, A300782, A300783, A?????? (species distinguished).
+%Y Cf. A001001, A159842, A?????? (species distinguished).
 %K nonn
 %A Richard H. Taylor, Nov 2026
 ```

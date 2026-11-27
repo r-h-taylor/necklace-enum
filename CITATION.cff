@@ -1,12 +1,12 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite the paper below."
 title: necklace-enum
-version: "0.3.3"
+version: "0.3.4"
 authors:
   - family-names: Taylor
     given-names: Richard H.
     orcid: "https://orcid.org/0009-0005-9996-0320"
-    affiliation: "Salt Lake City, Utah"
+    affiliation: "Duke University, Department of Mechanical Engineering and Materials Science"
 license: MIT
 abstract: "Enumerates derivative superstructures of a parent lattice by generating them directly as Lyndon words on the quotient group of each superlattice."
 keywords:
