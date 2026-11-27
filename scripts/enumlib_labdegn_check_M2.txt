@@ -1,5 +1,5 @@
 enum.x: /Users/richardtaylor/Projects/enumlib/src/enum.x
-enumlib commit: 6721785 2024-11-15 Merge pull request #129 from dreith/patch-1
+enumlib commit: 27c18dc 2026-11-21 README: note on Enumlib.jl, the Julia successor, with relative timings
 case                     rows   zero  = orbit = with ex.  neither   Tot ok
 fcc binary, full          631      0      422         95      151      631
     n=4 SNF=[1, 1, 4] HNF=[1, 0, 1, 0, 0, 4] labeling=0111  enumlib labdegn=1  orbit=4  with exchange=8
@@ -67,4 +67,3 @@ fcc 2:2:2 at n=6          100    100        0          0      100      100
       row: 3         3      12        0        0           3   6     4   1  1  6    1  0  1  0  2  6      1    0    0    0    1    0    0   -2    1   001122
 columns: rows read; labdegn = 0; labdegn = orbit under translations x point operations;
          labdegn = orbit also under species permutations; matches neither; Totdegn = Hdegn*labdegn
-inputs and outputs kept in /Users/richardtaylor/labdegn_check
