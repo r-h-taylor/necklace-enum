@@ -17,7 +17,7 @@ echo "== 1. Reproduce Hart & Forcade (2008), Table V: binary fcc, up to label ex
 necklace-enum count fcc 2 2-23 --label-exchange | tail -4
 
 echo
-echo "== 2. Beyond that table, by complete generation: n = 24-28 (Table 3 of the paper)"
+echo "== 2. Beyond that table, by complete generation: n = 24-28 (the table of counts in the paper)"
 necklace-enum count fcc 2 24-28 --label-exchange
 
 echo

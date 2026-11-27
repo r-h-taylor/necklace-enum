@@ -6,8 +6,8 @@ Run from the package folder:
     python check_necklace_enum.py          # under a minute
     python check_necklace_enum.py --full   # more cases and larger cells (a few minutes)
 
-Section 4 times the Hart & Forcade (2008) algorithm (tests/hart_forcade.py) against
-necklace-enum on the same problems and checks that their counts agree.
+Section 4 checks the counts against our own reimplementation of the table-based Hart & Forcade
+(2008) algorithm (tests/hart_forcade.py). The reimplementation is not enumlib.
 
 Uses the installed package if there is one, otherwise the copy in ./src.
 Needs numpy and numba; ase and spglib are optional (export check).
@@ -121,33 +121,22 @@ def check_export(full):
                f"{len(structs)} structures")
 
 
-# ---------------------------------------------------------------- 4. timing against Hart & Forcade
-def check_timing(full):
-    print("4. Speed against the Hart & Forcade (2008) algorithm")
-    print("   (one core, both compiled with Numba; all compositions, label exchange; times include setup)")
+# ---------------------------------------------------------------- 4. counts against the 2008 algorithm (reimplementation)
+def check_reference(full):
+    print("4. Counts against our reimplementation of the table-based Hart & Forcade (2008) algorithm")
+    print("   (tests/hart_forcade.py; not enumlib; all compositions, label exchange)")
     import hart_forcade as hf
-    hf.count_structures(te.fcc(2), 4)                     # compile both before timing
-    te.count_structures(te.fcc(2), 4, label_exchange=True)
     cases = [(2, n) for n in (16, 18, 20, 22, 24)] + [(3, n) for n in (10, 12, 14)]
     if full:
         cases = [(2, n) for n in (16, 18, 20, 22, 24, 25, 26, 28)] + [(3, n) for n in (10, 12, 14, 16)]
-    print(f"   {'problem':22s} {'structures':>13s} {'Hart-Forcade':>13s} {'necklace-enum':>14s} {'speedup':>8s}")
     for k, n in cases:
         P = te.fcc(k)
-        t = time.perf_counter()
-        ours = te.count_structures(P, n, label_exchange=True)[n]
-        t_ours = time.perf_counter() - t
         name = f"fcc {'binary' if k == 2 else 'ternary'}, n={n}"
         if 8 * k ** n > 2e9:
-            print(f"   {name:22s} {ours:>13,d} {'(> 2 GB)':>13s} {t_ours:>12.2f} s {'':>8s}", flush=True)
-            continue
-        t = time.perf_counter()
+            continue                                      # the reference needs 8 k^n bytes
+        ours = te.count_structures(P, n, label_exchange=True)[n]
         ref = hf.count_structures(P, n)
-        t_hf = time.perf_counter() - t
-        ok = ref == ours
-        print(f"   {name:22s} {ours:>13,d} {t_hf:>11.2f} s {t_ours:>12.2f} s {t_hf / t_ours:>7.0f}x"
-              + ("" if ok else f"   COUNTS DIFFER (Hart-Forcade {ref:,d})"), flush=True)
-        RESULTS.append((f"{name}: counts agree with Hart-Forcade", ok))
+        report(name, ref == ours, f"{ours:,d} structures" + ("" if ref == ours else f", reference {ref:,d}"))
 
 
 if __name__ == "__main__":
@@ -156,7 +145,7 @@ if __name__ == "__main__":
     args = ap.parse_args()
     print(f"necklace-enum {te.__version__} from {os.path.dirname(te.__file__)}\n")
     t0 = time.perf_counter()
-    for step in (check_published, check_brute_force, check_export, check_timing):
+    for step in (check_published, check_brute_force, check_export, check_reference):
         step(args.full)
         print()
     failed = [n for n, ok in RESULTS if not ok]

@@ -6,9 +6,8 @@ Writes enumlib/struct_enum.out and necklace-enum/struct_enum.out next to the inp
 and checks, for every cell size, that the number of structures and the multiset of
 superlattice data (HNF degeneracy, number of fixing operations, composition up to
 renaming of species) agree. The two programs may choose different but equivalent
-representatives, so rows are not compared line by line. enumlib's labdegn column is
-not compared: it is 0 in its fixed-concentration mode and not an orbit size for some
-labelings in its "full" mode.
+representatives, so rows are not compared line by line. The labdegn column is not
+compared; necklace-enum's degeneracies are checked separately in tests/test_degeneracy.py.
 """
 import collections
 import os

@@ -1,3 +1,6 @@
+# NOTE: the necklace-enum columns of this file (count, list, "vs list") come from an earlier run that listed
+# structures as objects with an earlier version. The paper's Table 1 takes necklace-enum's times from
+# necklace_timings_M2.txt; only this file's dsenum column is used.
 /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/dsenum/utils.py:86: DeprecationWarning: dict interface is deprecated. Use attribute interface instead
   rotations = sym_dataset["rotations"]
 # macOS-26.6.2-arm64-arm-64bit, arm, Python 3.11.1, cooldown 60 s

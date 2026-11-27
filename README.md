@@ -23,7 +23,7 @@ pip install necklace-enum            # numpy + numba
 pip install "necklace-enum[ase]"     # to export ASE Atoms
 ```
 
-From a clone of this repository (needed for the tests and the benchmark scripts):
+From a clone of this repository (needed for the tests):
 
 ```bash
 pip install ".[test]"
@@ -131,15 +131,14 @@ The output follows enumlib's conventions:
 - A "partial" listing without concentration restrictions identifies structures related by swapping species, as in
   Hart & Forcade's tables. "Full" listings and concentration-restricted runs list them separately.
 - The degeneracy columns are exact, in every mode: `Totdegn` summed over a cell size equals the number of
-  (superlattice, labeling) pairs the structures stand for. enumlib writes `labdegn = 0` in its fixed-concentration
-  mode; necklace-enum fills it in there too.
+  (superlattice, labeling) pairs the structures stand for, including at fixed concentration.
 
 `scripts/compare_with_enumlib.py` runs both programs on the same input and compares the results.
 
 ## Verification
 
 ```bash
-python check_necklace_enum.py           # stand-alone check incl. timing against Hart & Forcade (under a minute)
+python check_necklace_enum.py           # stand-alone check (under a minute)
 python check_necklace_enum.py --full    # more cases and larger cells (a few minutes)
 pytest                   # brute force, published counts, export checks (about 15 s)
 pytest --slow            # also binary fcc up to n = 23
@@ -149,7 +148,7 @@ The tests compare the generated structures, one by one, with an independent brut
 simple-cubic and hcp parents (including site restrictions and fixed compositions). They also reproduce every count
 tabulated by Hart & Forcade, compare the Burnside counter with the generator over parents, species counts,
 compositions and site restrictions, and check that each exported crystal is primitive in its own cell and that no two
-exported crystals are symmetry-equivalent. The enumlib-format tests rebuild every structure from the written file with enumlib's indexing rule and check the degeneracy columns against a direct count. `tests/test_degeneracy.py` checks the generator's degeneracies against an independent pass that applies every operation of each superlattice's group, over Bravais and multilattice parents, label exchange, fixed compositions and site restrictions, and checks that the total degeneracies count every labeling of every superlattice, by direct enumeration. `tests/hart_forcade.py` is a compiled reference implementation of the 2008 algorithm, used to check counts and to compare speed.
+exported crystals are symmetry-equivalent. The enumlib-format tests rebuild every structure from the written file with enumlib's indexing rule and check the degeneracy columns against a direct count. `tests/test_degeneracy.py` checks the generator's degeneracies against an independent pass that applies every operation of each superlattice's group, over Bravais and multilattice parents, label exchange, fixed compositions and site restrictions, and checks that the total degeneracies count every labeling of every superlattice, by direct enumeration. `tests/test_hart_forcade.py` compares the structure lists, superlattice by superlattice and in canonical form, with `tests/hart_forcade.py`, our own compiled reimplementation of the table-based 2008 algorithm (not enumlib), in 118 cases: fcc, bcc, simple-cubic, hexagonal and tetragonal parents, two to four species, with and without label exchange, at all and at fixed compositions.
 
 ## Performance and limits
 

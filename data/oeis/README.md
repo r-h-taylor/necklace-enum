@@ -29,7 +29,7 @@ the database. Draft entries follow in OEIS internal format; replace `A??????` by
 %C For each of the A159842(n) symmetry-distinct superlattices S of index n, the structures are the orbits of labelings of the quotient group G = L/S (of order n) that are fixed by no nonzero translation, under translations, the point operations fixing S, and interchange of the labels. Burnside's lemma counts these orbits; Moebius inversion over the subgroups of G removes the labelings with a smaller period. Only subgroups whose Sylow subgroups are elementary abelian contribute.
 %H Richard H. Taylor, <a href="/A??????/b??????.txt">Table of n, a(n) for n = 1..100</a>
 %H Gus L. W. Hart and Rodney W. Forcade, <a href="https://doi.org/10.1103/PhysRevB.77.224115">Algorithm for generating derivative structures</a>, Phys. Rev. B 77, 224115 (2008); <a href="https://arxiv.org/abs/0804.3544">arXiv:0804.3544</a>. Table V gives a(2)..a(23).
-%H Richard H. Taylor, <a href="https://github.com/r-h-taylor/necklace-enum">necklace-enum</a>, derivative structures as Lyndon words (Python), 2026; <a href="https://doi.org/10.5281/zenodo.24330096">doi:10.5281/zenodo.24330096</a>.
+%H Richard H. Taylor, <a href="https://github.com/r-h-taylor/necklace-enum">necklace-enum</a>, derivative structures as Lyndon words (Python), 2026; <a href="https://doi.org/10.5281/zenodo.24330095">doi:10.5281/zenodo.24330095</a>.
 %e a(2) = 2: the L1_0 (CuAu) structure, alternating (001) planes of A and B, and the L1_1 (CuPt) structure, alternating (111) planes.
 %e a(3) = 3: one A2B structure on each of the A159842(3) = 3 superlattices of index 3.
 %o (Python) # pip install git+https://github.com/r-h-taylor/necklace-enum

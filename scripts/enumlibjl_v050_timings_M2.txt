@@ -1,3 +1,6 @@
+# NOTE: the necklace-enum columns of this file (count, list, "vs list") come from an earlier run that listed
+# structures as objects with an earlier version. The paper's Table 1 takes necklace-enum's times from
+# necklace_timings_M2.txt; only this file's Enumlib.jl column is used.
 # macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, Enumlib.jl 0.5.0 Julia 1.13.4, cooldown 60 s
 problem                                      structures  Enumlib.jl   count    list  vs list
 fcc binary, all compositions, n=16               95,837        0.34    0.05    0.18      1.9
