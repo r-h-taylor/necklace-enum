@@ -1,15 +1,13 @@
-# NOTE: the rows column of this log undercounts (arrays were deduplicated by id(), which Python reuses).
-# Timings are unaffected.
-# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, necklace-enum 0.3.2, cooldown 60 s
-problem                                      structures    count   arrays  objects   shared         rows
-fcc binary, all compositions, n=16               95,837     0.10     0.13     0.16     0.12        2,380
-fcc binary, all compositions, n=20            1,715,551     0.14     0.17     0.67     0.17       19,126
-fcc binary, all compositions, n=24           38,517,429     0.93     1.92    13.48     1.65      136,146
-fcc ternary, all compositions, n=12             713,147     0.10     0.14     0.36     0.13        3,993
-fcc ternary, all compositions, n=14           4,670,898     0.12     0.18     1.28     0.18        6,480
-fcc quaternary, all compositions, n=10          723,876     0.07     0.11     0.29     0.10        4,722
-fcc 15:5, n=20                                   26,199     0.10     0.11     0.12     0.11        1,838
-fcc 24:8, n=32                               22,697,848     1.35     2.45    11.46     2.28      302,242
-fcc 10:5:5, n=20                             73,095,238     1.18     2.39    23.59     2.41      305,034
-hcp binary, all compositions, 24 sites       33,718,390     3.00     7.03    34.63     7.16       48,439
-hcp ternary, all compositions, 16 sites      49,700,010     5.67    11.61    63.48    11.61       45,836
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, necklace-enum 0.3.3, Numba 0.65.1, cooldown 60 s
+problem                                      structures    count   arrays  objects
+fcc binary, all compositions, n=16               95,837     0.10     0.12     0.16
+fcc binary, all compositions, n=20            1,715,551     0.14     0.18     0.67
+fcc binary, all compositions, n=24           38,517,429     0.93     1.64    13.67
+fcc ternary, all compositions, n=12             713,147     0.09     0.14     0.36
+fcc ternary, all compositions, n=14           4,670,898     0.12     0.18     1.25
+fcc quaternary, all compositions, n=10          723,876     0.06     0.10     0.29
+fcc 15:5, n=20                                   26,199     0.10     0.11     0.11
+fcc 24:8, n=32                               22,697,848     1.34     2.30    11.34
+fcc 10:5:5, n=20                             73,095,238     1.17     2.45    23.19
+hcp binary, all compositions, 24 sites       33,718,390     3.00     7.10    34.09
+hcp ternary, all compositions, 16 sites      49,700,010     5.59    11.72    61.66

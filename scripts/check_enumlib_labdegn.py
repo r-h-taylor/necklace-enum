@@ -10,7 +10,10 @@ point z has address g = L z mod D, label index g1*d2*d3 + g2*d3 + g3) and the or
 of that labeling on that superlattice is generated explicitly: every translation of
 the supercell, times every parent point operation that maps the superlattice onto
 itself, and, as a second number, also every permutation of the species. The orbit
-sizes are compared with enumlib's labdegn, and Totdegn with Hdegn * labdegn.
+sizes are compared with enumlib's labdegn, and Totdegn with Hdegn * labdegn. For each
+cell size, the sum of Totdegn is compared with the sum of Hdegn * orbit size (with
+species permutations in a "part" listing), which counts every (superlattice, labeling)
+pair once.
 
 Needs only numpy and enum.x. Shares no code with necklace-enum or enumlib.
 Bravais parents only (one site per primitive cell).
@@ -143,6 +146,7 @@ def run_case(enumx, workdir, name, parent, k, sizes, mode, conc, show):
     cells = {}
     stats = Counter()
     bad = []
+    tot = {}
     for row in read_rows(out):
         key = (row["H"].tobytes(), row["L"].tobytes())
         if key not in cells:
@@ -152,6 +156,10 @@ def run_case(enumx, workdir, name, parent, k, sizes, mode, conc, show):
         o1 = cell.orbit(lab, no_ex)
         o2 = cell.orbit(lab, all_ex)
         got = row["lab_degen"]
+        ex = o2 if mode == "part" and not conc else o1
+        t = tot.setdefault(row["n"], [0, 0])
+        t[0] += row["tot_degen"]
+        t[1] += row["hnf_degen"] * ex
         stats["rows"] += 1
         stats["zero"] += got == 0
         stats["= orbit"] += got == o1
@@ -163,6 +171,10 @@ def run_case(enumx, workdir, name, parent, k, sizes, mode, conc, show):
     s = stats
     print(f"{name:22s} {s['rows']:6d} {s['zero']:6d} {s['= orbit']:8d} {s['= orbit with exchange']:10d} "
           f"{s['neither']:8d} {s['Totdegn = Hdegn*labdegn']:8d}")
+    off = {n: t for n, t in sorted(tot.items()) if t[0] != t[1]}
+    if off:
+        print("    sum of Totdegn by size, enumlib vs direct: "
+              + ", ".join(f"n={n}: {a:,d} vs {b:,d}" for n, (a, b) in off.items()))
     for row, o1, o2 in bad[:show]:
         print(f"    n={row['n']} SNF={row['D'].tolist()} HNF={row['H'][np.tril_indices(3)].tolist()} "
               f"labeling={row['labeling']}  enumlib labdegn={row['lab_degen']}  orbit={o1}  with exchange={o2}")

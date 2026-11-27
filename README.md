@@ -23,7 +23,7 @@ pip install necklace-enum            # numpy + numba
 pip install "necklace-enum[ase]"     # to export ASE Atoms
 ```
 
-From a clone of this repository (needed for the tests):
+From a clone of this repository (needed for the tests and the benchmark scripts in `scripts/`):
 
 ```bash
 pip install ".[test]"
@@ -153,7 +153,7 @@ exported crystals are symmetry-equivalent. The enumlib-format tests rebuild ever
 ## Performance and limits
 
 - The compiled generator labels binary fcc structures at tens of nanoseconds per structure. `count_structures`
-  counts all 4,592,213,143 binary fcc structures with 32 sites per cell (up to label exchange) in about 230 s on
+  counts all 4,592,213,143 binary fcc structures with 32 sites per cell (up to label exchange) in about 194 s on
   one core of an Apple M2.
 - Memory does not grow with the number of structures. The generator's state is polynomial in the cell size, and
   listing streams structures from the compiled kernel in batches of 2^16 words. Counting stays within 10 MB of the

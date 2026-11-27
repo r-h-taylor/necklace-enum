@@ -42,7 +42,7 @@ permutation applied to every letter, so the distinct structures are Lyndon words
 necklace algorithm. Nothing about earlier structures is stored, so memory does not grow with the number of
 structures: counting 9.2 billion structures stays within 10&nbsp;MB of the interpreter's baseline, and listing
 stays below 0.22&nbsp;GB on problems where enumlib needs gigabytes or runs out of memory. The package reproduces
-all published counts and lists structures ~2&ndash;80&times; faster than the fastest of enumlib, Enumlib.jl and
+all published counts and lists structures ~2&ndash;90&times; faster than the fastest of enumlib, Enumlib.jl and
 dsenum on each benchmark problem, for cells larger than 14 sites. Each structure comes with its degeneracy, its weight in a partition function, at
 fixed composition as well, taken from the generator's own symmetry comparisons.</p>
 
@@ -51,7 +51,7 @@ fixed composition as well, taken from the generator's own symmetry comparisons.<
   <li class="use">
     <p>Install with <code>pip install necklace-enum</code> (Python 3.10 or later; NumPy and Numba are installed
     automatically). The tests, the checks against the published counts and an independent brute-force code, and the
-    raw benchmark logs are in the <a href="https://github.com/r-h-taylor/necklace-enum">repository</a>. In Python:</p>
+    benchmark scripts with their raw logs are in the <a href="https://github.com/r-h-taylor/necklace-enum">repository</a>. In Python:</p>
 <pre>import necklace_enum as te
 
 P = te.fcc(["Cu", "Au"])

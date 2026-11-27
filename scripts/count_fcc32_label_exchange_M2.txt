@@ -1,0 +1,2 @@
+# macOS-26.6.2-arm64-arm-64bit, Python 3.11.1, necklace-enum 0.3.3, Numba 0.65.1
+binary fcc, n=32, up to label exchange: 4,592,213,143 structures in 193.9 s (one run, after compilation)

@@ -2,6 +2,7 @@ enum.x: /Users/richardtaylor/Projects/enumlib/src/enum.x
 enumlib commit: 27c18dc 2026-11-21 README: note on Enumlib.jl, the Julia successor, with relative timings
 case                     rows   zero  = orbit = with ex.  neither   Tot ok
 fcc binary, full          631      0      422         95      151      631
+    sum of Totdegn by size, enumlib vs direct: n=4: 303 vs 392, n=6: 4,550 vs 4,914, n=8: 33,696 vs 36,136
     n=4 SNF=[1, 1, 4] HNF=[1, 0, 1, 0, 0, 4] labeling=0111  enumlib labdegn=1  orbit=4  with exchange=8
       row: 21         7       4        1        4          11   4    12   1  1  4    1  0  1  0  0  4      1    0    0    0    1    0    0    0    1   0111
     n=4 SNF=[1, 1, 4] HNF=[1, 0, 1, 0, 1, 4] labeling=0111  enumlib labdegn=1  orbit=4  with exchange=8
@@ -9,6 +10,7 @@ fcc binary, full          631      0      422         95      151      631
     n=4 SNF=[1, 1, 4] HNF=[1, 0, 1, 0, 2, 4] labeling=0111  enumlib labdegn=1  orbit=4  with exchange=8
       row: 23         9      12        1       12          13   4     4   1  1  4    1  0  1  0  2  4      1    0    0    0    1    0    0   -2    1   0111
 fcc binary, part          362      0       54        271       90      362
+    sum of Totdegn by size, enumlib vs direct: n=6: 4,277 vs 4,914, n=8: 34,999 vs 36,136
     n=6 SNF=[1, 1, 6] HNF=[1, 0, 1, 0, 0, 6] labeling=001011  enumlib labdegn=5  orbit=12  with exchange=12
       row: 72        19       4        5       20          41   6    12   1  1  6    1  0  1  0  0  6      1    0    0    0    1    0    0    0    1   001011
     n=6 SNF=[1, 1, 6] HNF=[1, 0, 1, 0, 1, 6] labeling=001011  enumlib labdegn=5  orbit=12  with exchange=12
@@ -16,6 +18,7 @@ fcc binary, part          362      0       54        271       90      362
     n=6 SNF=[1, 1, 6] HNF=[1, 0, 1, 0, 2, 6] labeling=001011  enumlib labdegn=5  orbit=12  with exchange=12
       row: 74        21      12        5       60          43   6     4   1  1  6    1  0  1  0  2  6      1    0    0    0    1    0    0   -2    1   001011
 fcc ternary, full        1081      0      736         13      345     1081
+    sum of Totdegn by size, enumlib vs direct: n=4: 2,222 vs 2,436, n=6: 61,243 vs 63,336
     n=4 SNF=[1, 1, 4] HNF=[1, 0, 1, 0, 0, 4] labeling=0102  enumlib labdegn=1  orbit=4  with exchange=12
       row: 56         7       4        1        4          26   4    12   1  1  4    1  0  1  0  0  4      1    0    0    0    1    0    0    0    1   0102
     n=4 SNF=[1, 1, 4] HNF=[1, 0, 1, 0, 1, 4] labeling=0102  enumlib labdegn=1  orbit=4  with exchange=12
@@ -24,6 +27,7 @@ fcc ternary, full        1081      0      736         13      345     1081
       row: 58         9      12        1       12          28   4     4   1  1  4    1  0  1  0  2  4      1    0    0    0    1    0    0   -2    1   0102
 fcc ternary, part         169      0       13        169        0      169
 bcc binary, full          631      0      421         95      152      631
+    sum of Totdegn by size, enumlib vs direct: n=4: 309 vs 392, n=6: 4,550 vs 4,914, n=8: 33,280 vs 36,136
     n=4 SNF=[1, 1, 4] HNF=[1, 0, 1, 0, 0, 4] labeling=0111  enumlib labdegn=1  orbit=4  with exchange=8
       row: 21         7       6        1        6          11   4     8   1  1  4    1  0  1  0  0  4      1    0    0    0    1    0    0    0    1   0111
     n=4 SNF=[1, 1, 4] HNF=[1, 0, 1, 0, 2, 4] labeling=0111  enumlib labdegn=1  orbit=4  with exchange=8
@@ -31,6 +35,7 @@ bcc binary, full          631      0      421         95      152      631
     n=4 SNF=[1, 1, 4] HNF=[1, 0, 1, 1, 1, 4] labeling=0111  enumlib labdegn=1  orbit=4  with exchange=8
       row: 23         9       3        1        3          13   4    16   1  1  4    1  0  1  1  1  4      1    0    0    0    1    0   -1   -1    1   0111
 sc binary, part           443      0       73        333      108      443
+    sum of Totdegn by size, enumlib vs direct: n=6: 4,277 vs 4,914, n=8: 35,134 vs 36,136
     n=6 SNF=[1, 1, 6] HNF=[1, 0, 1, 0, 0, 6] labeling=001011  enumlib labdegn=5  orbit=12  with exchange=12
       row: 88        22       3        5       15          53   6    16   1  1  6    1  0  1  0  0  6      1    0    0    0    1    0    0    0    1   001011
     n=6 SNF=[1, 1, 6] HNF=[1, 0, 1, 0, 1, 6] labeling=001011  enumlib labdegn=5  orbit=12  with exchange=12
@@ -38,6 +43,7 @@ sc binary, part           443      0       73        333      108      443
     n=6 SNF=[1, 1, 6] HNF=[1, 0, 1, 0, 2, 6] labeling=001011  enumlib labdegn=5  orbit=12  with exchange=12
       row: 90        24      12        5       60          55   6     4   1  1  6    1  0  1  0  2  6      1    0    0    0    1    0    0   -2    1   001011
 fcc 6:2 at n=8             42     42        0          0       42       42
+    sum of Totdegn by size, enumlib vs direct: n=8: 0 vs 3,360
     n=8 SNF=[1, 1, 8] HNF=[1, 0, 1, 0, 0, 8] labeling=11000000  enumlib labdegn=0  orbit=8  with exchange=16
       row: 1         1       4        0        0           1   8    12   1  1  8    1  0  1  0  0  8      1    0    0    0    1    0    0    0    1   11000000
     n=8 SNF=[1, 1, 8] HNF=[1, 0, 1, 0, 1, 8] labeling=11000000  enumlib labdegn=0  orbit=8  with exchange=16
@@ -45,6 +51,7 @@ fcc 6:2 at n=8             42     42        0          0       42       42
     n=8 SNF=[1, 1, 8] HNF=[1, 0, 1, 0, 2, 8] labeling=11000000  enumlib labdegn=0  orbit=8  with exchange=16
       row: 3         3      12        0        0           3   8     4   1  1  8    1  0  1  0  2  8      1    0    0    0    1    0    0   -2    1   11000000
 fcc 4:4 at n=8             94     94        0          0       94       94
+    sum of Totdegn by size, enumlib vs direct: n=8: 0 vs 9,576
     n=8 SNF=[1, 1, 8] HNF=[1, 0, 1, 0, 0, 8] labeling=00001111  enumlib labdegn=0  orbit=8  with exchange=8
       row: 1         1       4        0        0           1   8    12   1  1  8    1  0  1  0  0  8      1    0    0    0    1    0    0    0    1   00001111
     n=8 SNF=[1, 1, 8] HNF=[1, 0, 1, 0, 1, 8] labeling=00001111  enumlib labdegn=0  orbit=8  with exchange=8
@@ -52,6 +59,7 @@ fcc 4:4 at n=8             94     94        0          0       94       94
     n=8 SNF=[1, 1, 8] HNF=[1, 0, 1, 0, 2, 8] labeling=00001111  enumlib labdegn=0  orbit=8  with exchange=8
       row: 3         3      12        0        0           3   8     4   1  1  8    1  0  1  0  2  8      1    0    0    0    1    0    0   -2    1   00001111
 fcc 9:3 at n=12           391    391        0          0      391      391
+    sum of Totdegn by size, enumlib vs direct: n=12: 0 vs 98,280
     n=12 SNF=[1, 1, 12] HNF=[1, 0, 1, 0, 0, 12] labeling=111000000000  enumlib labdegn=0  orbit=12  with exchange=24
       row: 1         1       4        0        0           1  12    12   1  1 12    1  0  1  0  0 12      1    0    0    0    1    0    0    0    1   111000000000
     n=12 SNF=[1, 1, 12] HNF=[1, 0, 1, 0, 1, 12] labeling=111000000000  enumlib labdegn=0  orbit=12  with exchange=24
@@ -59,6 +67,7 @@ fcc 9:3 at n=12           391    391        0          0      391      391
     n=12 SNF=[1, 1, 12] HNF=[1, 0, 1, 0, 2, 12] labeling=111000000000  enumlib labdegn=0  orbit=12  with exchange=24
       row: 3         3      12        0        0           3  12     4   1  1 12    1  0  1  0  2 12      1    0    0    0    1    0    0   -2    1   111000000000
 fcc 2:2:2 at n=6          100    100        0          0      100      100
+    sum of Totdegn by size, enumlib vs direct: n=6: 0 vs 7,644
     n=6 SNF=[1, 1, 6] HNF=[1, 0, 1, 0, 0, 6] labeling=001122  enumlib labdegn=0  orbit=12  with exchange=12
       row: 1         1       4        0        0           1   6    12   1  1  6    1  0  1  0  0  6      1    0    0    0    1    0    0    0    1   001122
     n=6 SNF=[1, 1, 6] HNF=[1, 0, 1, 0, 1, 6] labeling=001122  enumlib labdegn=0  orbit=12  with exchange=12

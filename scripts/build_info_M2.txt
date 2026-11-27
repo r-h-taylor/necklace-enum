@@ -1,0 +1,35 @@
+Thu Nov 26 20:14:58 MST 2026
+macOS-26.6.2-arm64-arm-64bit
+Python 3.11.1 | NumPy 2.4.4 | Numba 0.65.1
+necklace-enum 0.3.3 from /Users/richardtaylor/Projects/necklace-enum/src/necklace_enum/__init__.py
+necklace-enum repository: fa08dfc 2026-11-26
+enumlib repository: 27c18dc 2026-11-21 README: note on Enumlib.jl, the Julia successor, with relative timings
+
+== enum.x
+-rwxr-xr-x  1 richardtaylor  staff  602104 Nov 21 08:41 /Users/richardtaylor/Projects/enumlib/src/enum.x
+/Users/richardtaylor/Projects/enumlib/src/enum.x: Mach-O 64-bit executable arm64
+
+== Fortran runtime it links to (tells which gfortran built it)
+	/opt/homebrew/opt/gcc/lib/gcc/current/libgfortran.5.dylib (compatibility version 6.0.0, current version 6.0.0)
+	/opt/homebrew/opt/gcc/lib/gcc/current/libquadmath.0.dylib (compatibility version 1.0.0, current version 1.0.0)
+/opt/homebrew/bin/gfortran: GNU Fortran (Homebrew GCC 16.2.0) 16.2.0  [lib dir: /opt/homebrew/Cellar/gcc/16.2.0/bin/../lib/gcc/current/gcc/aarch64-apple-darwin25/16/../../../libgfortran.dylib]
+/usr/local/bin/gfortran: GNU Fortran (Homebrew GCC 10.1.0) 10.1.0  [lib dir: /usr/local/Cellar/gcc/10.1.0/lib/gcc/10/gcc/x86_64-apple-darwin16/10.1.0/../../../libgfortran.dylib]
+gfortran first on PATH now: /opt/homebrew/bin/gfortran -> GNU Fortran (Homebrew GCC 16.2.0) 16.2.0
+
+== Compiler recorded in the object files (if present)
+derivative_structure_generator.o: no version string (normal on macOS)
+symmetry.o: no version string (normal on macOS)
+
+== Optimisation and debug flags
+src/Makefile flags for gfortran:
+14:  ifeq (${DEBUG},false)
+15:     FFLAGS = -O3 -ffree-line-length-none -fno-underscoring -I${LBD1}
+18:	FFLAGS = -fPIC -g -fbounds-check -ffree-line-length-none -fno-underscoring -I${LBD1}
+25:  FFLAGS = -fPIC -g -error-limit 7 -traceback -check bounds -warn  -I${LBD1}
+30:  ifeq (${DEBUG},false)
+31:     FFLAGS =  -fPIC -O3 -I${LBD1}
+35:     FFLAGS =  -fPIC -g -debug -error-limit 7 -heap-arrays -traceback -check bounds -warn -I${LBD1}
+43:  FFLAGS = -g -C -fPIC -qsuffix=f=f90  -I${LBD1}
+libutils.a: debug-info sections: 0  bounds-check calls: 0   (0 and 0 = optimised build; >0 = -g / -fbounds-check)
+libsym.a: debug-info sections: 0  bounds-check calls: 3   (0 and 0 = optimised build; >0 = -g / -fbounds-check)
+enum.x: DWARF segments: 0  bounds-check calls: 1

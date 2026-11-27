@@ -1,0 +1,37 @@
+# enumlib 27c18dc, fcc 42:6 at n = 48, output to /dev/null, stopped after 3600 s
+fcc
+bulk
+0.5 0.5 0.0
+0.5 0.0 0.5
+0.0 0.5 0.5
+ 2 -nary case
+ 1
+ 0.0 0.0 0.0 0/1
+ 48 48
+0.10000000E-06
+full list of labelings
+# Concentration restrictions
+42 42 48
+6 6 48
+# ---- enum.x stdout and stderr, then /usr/bin/time -l
+time: command terminated abnormally
+      473.80 real       441.39 user        29.23 sys
+          2760736768  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             7930432  page reclaims
+                  61  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  13  voluntary context switches
+               18598  involuntary context switches
+       7340769469221  instructions retired
+       1599828548237  cycles elapsed
+        129974119888  peak memory footprint
+time: signal: Invalid argument
+# exit status: 1
